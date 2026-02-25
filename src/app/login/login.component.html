@@ -1,0 +1,52 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="brand-icon"><img src="/logo/logoTrans.png" alt="Logo"></div>
+    <h1 class="brand-title">Centre Commercial</h1>
+    <p class="brand-subtitle">Connexion à votre espace de gestion</p>
+
+    <div *ngIf="errorMessage" class="alert-error">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="mb-3">
+        <label class="form-label">Matricule</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="matricule"
+          name="matricule"
+          placeholder="Entrez votre matricule"
+          required
+          autocomplete="username"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">Mot de passe</label>
+        <input
+          type="password"
+          class="form-control"
+          [(ngModel)]="mdp"
+          name="mdp"
+          placeholder="Entrez votre mot de passe"
+          required
+          autocomplete="current-password"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="loading || !matricule || !mdp"
+      >
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+  </div>
+  
+  <div class="login-image">
+    <img src="/img/login.png" alt="Illustration boutique">
+  </div>
+</div>

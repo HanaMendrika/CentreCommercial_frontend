@@ -1,0 +1,210 @@
+:host {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('/img/background.png') no-repeat center center;
+  background-size: cover;
+  position: relative;
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 20px;
+}
+
+.login-container {
+  display: flex;
+  max-width: 700px;
+  width: 100%;
+  background: rgba(248, 248, 248, 0.08);
+  border: 1px solid rgba(251, 226, 72, 0.15);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.login-card {
+  flex: 1;
+  padding: 40px 36px;
+  min-width: 380px;
+  /* Supprimé: width, max-width, background, border-radius, backdrop-filter, box-shadow */
+  /* Ces propriétés sont maintenant sur le conteneur parent */
+}
+
+.login-image {
+  /* flex: 1; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background: linear-gradient(135deg, rgba(251, 226, 72, 0.1), rgba(251, 226, 72, 0.05)); */
+  padding: 5px;
+  /* border-left: 1px solid rgba(251, 226, 72, 0.2); */
+}
+
+.login-image img {
+  max-width: 100%;
+  max-height: 1000px;
+  object-fit: contain;
+  border-radius: 12px;
+  transform: scale(1.2);
+}
+
+.brand-icon {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #FBE248;
+}
+
+.brand-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-title {
+  color: #FBE248;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: 0.6px;
+}
+
+.brand-subtitle {
+  color: #F8F8F8;
+  opacity: 0.55;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.form-label {
+  color: #F8F8F8;
+  opacity: 0.8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.form-control {
+  background: rgba(248, 248, 248, 0.09);
+  border: 1px solid rgba(251, 226, 72, 0.2);
+  border-radius: 10px;
+  color: #F8F8F8;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: all 0.22s ease;
+}
+
+.form-control:focus {
+  background: rgba(251, 226, 72, 0.08);
+  border-color: #FBE248;
+  box-shadow: 0 0 0 3px rgba(251, 226, 72, 0.18);
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: rgba(248, 248, 248, 0.35);
+}
+
+.mb-3 {
+  margin-bottom: 1.4rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.8rem;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #FBE248, #e8c93a);
+  border: none;
+  border-radius: 10px;
+  color: #372A21;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(251, 226, 72, 0.35);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #372A21;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.alert-error {
+  background: rgba(251, 226, 72, 0.12);
+  border: 1px solid rgba(251, 226, 72, 0.3);
+  border-radius: 10px;
+  color: #FBE248;
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    max-width: 500px;
+  }
+  
+  .login-card {
+    min-width: auto;
+  }
+  
+  .login-image {
+    border-left: none;
+    border-top: 1px solid rgba(251, 226, 72, 0.2);
+    padding: 40px;
+  }
+  
+  .login-image img {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 500px) {
+  .login-card {
+    padding: 30px 20px;
+  }
+  
+  .login-image {
+    padding: 20px;
+  }
+}
