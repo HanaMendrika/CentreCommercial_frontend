@@ -1,0 +1,143 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BoutiqueApiService } from '../../services/boutique-api.service';
+
+@Component({
+  selector: 'app-clients',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="cc-page">
+      <div class="cc-page-header">
+        <div>
+          <h1 class="cc-page-title">Clients</h1>
+          <p class="cc-page-sub">Suivi de vos clients et clients VIP</p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="cc-tab-bar">
+        <button class="cc-tab" [class.active]="tab === 'tous'" (click)="switchTab('tous')">Tous les clients</button>
+        <button class="cc-tab" [class.active]="tab === 'vip'"  (click)="switchTab('vip')">⭐ Clients VIP</button>
+      </div>
+
+      <!-- Filtres -->
+      <div class="cc-filters">
+        <input class="cc-input" style="width:180px" type="date" [(ngModel)]="dateDebut" placeholder="Date début" />
+        <input class="cc-input" style="width:180px" type="date" [(ngModel)]="dateFin" placeholder="Date fin" />
+        <input *ngIf="tab === 'tous'" class="cc-input" style="width:180px" type="number" [(ngModel)]="montantMin" placeholder="Montant min (Ar)" />
+        <button class="cc-btn-primary" (click)="load()">Filtrer</button>
+      </div>
+
+      <div *ngIf="error" class="cc-error">{{ error }}</div>
+      <div *ngIf="loading" class="cc-loading">Chargement...</div>
+
+      <ng-container *ngIf="!loading">
+        <div *ngIf="items.length === 0" class="cc-table-wrap">
+          <div class="cc-empty">
+            <div class="cc-empty-icon">👥</div>
+            <p>Aucun client trouvé</p>
+          </div>
+        </div>
+
+        <div *ngIf="items.length > 0" class="cc-table-wrap">
+          <table class="cc-table">
+            <thead>
+              <tr>
+                <th>ID Client</th>
+                <th>Nom</th>
+                <th>Contact</th>
+                <th>Total dépensé</th>
+                <ng-container *ngIf="tab === 'vip'"><th>Nb achats</th></ng-container>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of items">
+                <td><span class="cc-badge cc-badge-neutral">{{ c.idAcheteur }}</span></td>
+                <td>{{ c.nom || '—' }}</td>
+                <td>{{ c.contact || '—' }}</td>
+                <td style="color:var(--cc-accent);font-weight:600">{{ c.totalDepense | number:'1.0-0' }} Ar</td>
+                <ng-container *ngIf="tab === 'vip'"><td>{{ c.nbAchats }}</td></ng-container>
+                <td>
+                  <button class="cc-btn-icon" (click)="viewDetail(c)" title="Voir détail">👁️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- MODAL DETAIL -->
+    <div class="cc-overlay" *ngIf="detail" (click)="detail = null">
+      <div class="cc-modal" (click)="$event.stopPropagation()" style="max-width:600px">
+        <div class="cc-modal-hd">
+          <h3 class="cc-modal-title">Détail client</h3>
+          <button class="cc-modal-close" (click)="detail = null">×</button>
+        </div>
+        <div *ngIf="detailLoading" class="cc-loading">Chargement...</div>
+        <ng-container *ngIf="!detailLoading && detail">
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--cc-border)">
+              <span class="cc-label" style="margin:0">ID</span><span style="color:var(--cc-text)">{{ detail.idAcheteur }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--cc-border)">
+              <span class="cc-label" style="margin:0">Nom</span><span style="color:var(--cc-text)">{{ detail.nom || '—' }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--cc-border)">
+              <span class="cc-label" style="margin:0">Contact</span><span style="color:var(--cc-text)">{{ detail.contact || '—' }}</span>
+            </div>
+          </div>
+          <h4 style="color:var(--cc-text);font-size:.9rem;font-weight:700;margin-bottom:12px">Historique des achats ({{ detail.historique?.length || 0 }})</h4>
+          <div *ngIf="detail.historique?.length === 0" style="color:var(--cc-muted);font-size:.85rem">Aucun achat</div>
+          <div *ngFor="let v of detail.historique" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--cc-border);font-size:.85rem">
+            <span style="color:var(--cc-muted)">{{ v.idProduit }}</span>
+            <span style="color:var(--cc-text)">{{ v.quantite }} × {{ v.prix | number:'1.0-0' }} Ar</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  `
+})
+export class ClientsComponent implements OnInit {
+  tab: 'tous' | 'vip' = 'tous';
+  items: any[] = [];
+  loading = false;
+  error = '';
+  dateDebut = '';
+  dateFin = '';
+  montantMin: number | null = null;
+  detail: any = null;
+  detailLoading = false;
+
+  constructor(private api: BoutiqueApiService) {}
+
+  ngOnInit() { this.load(); }
+
+  switchTab(t: 'tous' | 'vip') { this.tab = t; this.load(); }
+
+  load() {
+    this.loading = true; this.error = '';
+    const filters: any = {};
+    if (this.dateDebut) filters.date = this.dateDebut;
+    if (this.montantMin && this.tab === 'tous') filters.montantMin = this.montantMin;
+    if (this.dateDebut && this.tab === 'vip') filters.dateDebut = this.dateDebut;
+    if (this.dateFin && this.tab === 'vip') filters.dateFin = this.dateFin;
+
+    const obs = this.tab === 'vip' ? this.api.getTopClients(filters) : this.api.getClients(filters);
+    obs.subscribe({
+      next: d => { this.items = Array.isArray(d) ? d : []; this.loading = false; },
+      error: e => { this.error = e.error?.message || 'Erreur'; this.loading = false; }
+    });
+  }
+
+  viewDetail(c: any) {
+    this.detail = c; this.detailLoading = true;
+    this.api.getClientById(c.idAcheteur).subscribe({
+      next: d => { this.detail = d; this.detailLoading = false; },
+      error: () => this.detailLoading = false
+    });
+  }
+}
