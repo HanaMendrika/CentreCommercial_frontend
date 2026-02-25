@@ -147,7 +147,12 @@ export class LoyerComponent implements OnInit {
 
   ngOnInit() { this.load(); }
 
-  get totalPaye() { return this.items.reduce((s, l) => s + (l.montant || 0), 0); }
+  // only include loyer entries that have been marked as paid
+  get totalPaye() {
+    return this.items
+      .filter(l => l.idStatus === 'payé')
+      .reduce((s, l) => s + (l.montant || 0), 0);
+  }
 
   moisLabel(m: number) { return MOIS[m - 1] || m; }
 
