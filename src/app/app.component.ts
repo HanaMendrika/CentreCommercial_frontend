@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
     this.loading = true;
     this.error = null;
     
-    this.http.get('/api/boutique').subscribe({
+    this.http.get('/api/boutiques').subscribe({
       next: (data) => {
         this.response = data;
         this.loading = false;
