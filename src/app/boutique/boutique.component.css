@@ -1,0 +1,167 @@
+:host { 
+  display: flex; 
+  height: 100vh; 
+  overflow: hidden; 
+}
+
+.sidebar {
+  width: 230px;
+  min-width: 230px;
+  background: 
+    /* Couche de base très sombre */
+    radial-gradient(ellipse at 15% 85%, #1a0f06 0%, #0c0602 50%),
+    
+    /* Taches dorées dispersées – statiques */
+    radial-gradient(circle 80vmax at 25% 75%, rgba(251, 226, 72, 0.11) 0%, transparent 65%),
+    radial-gradient(circle 90vmax at 70% 35%, rgba(251, 226, 72, 0.09) 0%, transparent 70%),
+    radial-gradient(circle 70vmax at 40% 20%, rgba(251, 226, 72, 0.07) 0%, transparent 75%),
+    radial-gradient(circle 100vmax at 80% 80%, rgba(251, 226, 72, 0.05) 0%, transparent 70%),
+    
+    /* Touche très diffuse pour lier le tout */
+    radial-gradient(ellipse at 50% 50%, rgba(251, 226, 72, 0.03) 0%, transparent 85%);
+  
+  background-blend-mode: screen;
+  filter: brightness(0.94) contrast(1.04);
+  border-right: 1px solid rgba(251, 226, 72, 0.18); /* bordure subtile dorée */
+  
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  
+  /* Optionnel : pour que le fond reste visible même sur scroll */
+  background-attachment: fixed;
+}
+
+.brand {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(251, 226, 72, 0.2); /* Bordure jaune transparente */
+}
+
+.brand-icon {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #FBE248;
+}
+
+.brand-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-name { 
+  color: #F8F8F8; /* Jaune */
+  font-weight: 700; 
+  font-size: 0.95rem; 
+  margin: 0; 
+}
+
+.brand-sub {  
+  color: #F8F8F8; /* Jaune avec opacité */
+  font-size: 0.75rem; 
+  margin: 2px 0 0; 
+}
+
+nav { 
+  flex: 1; 
+  padding: 12px 10px; 
+}
+
+.nav-link {
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  padding: 10px 12px; 
+  border-radius: 10px; 
+  margin-bottom: 2px;
+  color: #F8F8F8; /* Jaune avec opacité */
+  font-size: 0.875rem; 
+  font-weight: 500;
+  text-decoration: none; 
+  transition: all 0.18s; 
+  cursor: pointer;
+}
+
+.nav-link:hover { 
+  background: #38320f; /* Vert avec opacité */
+  color: #FBE248; /* Jaune plein au hover */
+}
+
+.nav-link.active { 
+  background: rgba(251, 226, 72, 0.15); /* Jaune avec faible opacité */
+  color: #FBE248; /* Jaune plein pour l'actif */
+}
+
+.nav-icon { 
+  font-size: 1rem; 
+  width: 22px; 
+  text-align: center; 
+  color: #FBE248; /* Jaune */
+}
+
+.sidebar-footer {
+  padding: 16px 10px;
+  border-top: 1px solid rgba(251, 226, 72, 0.2); /* Bordure jaune transparente */
+}
+
+.user-row {
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  /* padding: 10px 12px;  */
+  margin-bottom: 8px;
+}
+
+.user-avatar {
+  width: 32px; 
+  height: 32px;
+  background: linear-gradient(135deg, #372A21, #FBE248); /* Dégradé vert vers jaune */
+  border-radius: 50%; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: 0.8rem; 
+  font-weight: 700; 
+  color: #F8F8F8; /* Vert foncé pour le contraste */
+  flex-shrink: 0;
+}
+
+.user-name {  
+  color: #FBE248; /* Jaune */
+  font-size: 0.82rem; 
+  font-weight: 600; 
+}
+
+.user-role {  
+  color: #F8F8F8; /* Jaune avec opacité */
+  font-size: 0.72rem; 
+}
+
+.btn-logout {
+  width: 100%; 
+  padding: 9px 12px; 
+  background: rgba(50, 122, 33, 0.3); /* Vert avec opacité */
+  border: 1px solid #FBE248; /* Bordure jaune */
+  border-radius: 10px;
+  color: #FBE248; /* Texte jaune */
+  font-size: 0.82rem; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: all .2s;
+}
+
+.btn-logout:hover { 
+  background: #327A21; /* Vert plein au hover */
+  color: #FBE248; /* Jaune */
+}
+
+.main { 
+  flex: 1; 
+  overflow-y: auto; 
+  background: #f5f5f5; /* Fond gris clair pour le contenu */
+}

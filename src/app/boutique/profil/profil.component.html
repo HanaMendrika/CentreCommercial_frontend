@@ -1,0 +1,122 @@
+<!-- profil.component.html -->
+<div class="cc-page">
+  <div class="cc-page-header">
+    <div>
+      <h1 class="cc-page-title"><img src="/icons/profils.png" alt=""> Profil boutique</h1>
+      <p class="cc-page-sub">Informations et paramètres de votre boutique</p>
+    </div>
+    <button *ngIf="!editing && profil" class="cc-btn-primary" (click)="startEdit()">
+      <img src="/icons/modifier.png" alt="">
+    </button>
+  </div>
+
+  <div *ngIf="error" class="cc-error">{{ error }}</div>
+  <div *ngIf="loading" class="cc-loading"><div class="loader"></div></div>
+
+  <ng-container *ngIf="!loading && profil">
+    <!-- VIEW MODE -->
+    <div *ngIf="!editing" class="cc-card" style="max-width:640px">
+      <div class="profil-grid">
+        <div class="profil-field">
+          <span class="profil-label">ID Boutique</span>
+          <span class="profil-val">
+            <span class="cc-badge cc-badge-neutral">{{ profil.idboutique }}</span>
+          </span>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">Libellé</span>
+          <span class="profil-val">{{ profil.libelle }}</span>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">Description</span>
+          <span class="profil-val">{{ profil.description }}</span>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">URL</span>
+          <a [href]="profil.url" target="_blank" class="profil-val" style="color:var(--cc-accent)">
+            {{ profil.url }}
+          </a>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">Ouverture</span>
+          <span class="profil-val">{{ profil.ouverture }}</span>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">Fermeture</span>
+          <span class="profil-val">{{ profil.fermeture || '—' }}</span>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">Date début</span>
+          <span class="profil-val">{{ profil.dateDebut | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">Date fin</span>
+          <span class="profil-val">{{ profil.dateFin | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="profil-field">
+          <span class="profil-label">Catégorie</span>
+          <span class="profil-val">{{ profil.idCategorie }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div *ngIf="editing" class="cc-card" style="max-width:640px">
+      <div *ngIf="saveError" class="cc-error">{{ saveError }}</div>
+      <div *ngIf="saveOk" class="cc-success-message">
+        Profil mis à jour avec succès !
+      </div>
+
+      <div class="cc-fg">
+        <label class="cc-label">Libellé</label>
+        <input class="cc-input" [(ngModel)]="form.libelle" />
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">Description</label>
+        <textarea class="cc-textarea cc-input" [(ngModel)]="form.description"></textarea>
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">URL</label>
+        <input class="cc-input" [(ngModel)]="form.url" placeholder="https://..." />
+      </div>
+      <div class="cc-fg-row">
+        <div class="cc-fg">
+          <label class="cc-label">Ouverture</label>
+          <input class="cc-input" [(ngModel)]="form.ouverture" placeholder="08:00" />
+        </div>
+        <div class="cc-fg">
+          <label class="cc-label">Fermeture</label>
+          <input class="cc-input" [(ngModel)]="form.fermeture" placeholder="18:00" />
+        </div>
+      </div>
+      <div class="cc-fg-row">
+        <div class="cc-fg">
+          <label class="cc-label">Date début</label>
+          <input class="cc-input" type="date" [(ngModel)]="form.dateDebut" />
+        </div>
+        <div class="cc-fg">
+          <label class="cc-label">Date fin</label>
+          <input class="cc-input" type="date" [(ngModel)]="form.dateFin" />
+        </div>
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">ID Catégorie</label>
+        <input class="cc-input" type="number" [(ngModel)]="form.idCategorie" />
+      </div>
+
+      <div class="cc-actions">
+        <button class="cc-btn-ghost" (click)="cancelEdit()">Annuler</button>
+        <button class="cc-btn-primary" (click)="save()" [disabled]="saving">
+          {{ saving ? 'Enregistrement...' : 'Sauvegarder' }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <div *ngIf="!loading && !profil && !error" class="cc-card" style="max-width:640px">
+    <p style="color:var(--cc-muted)">
+      Aucun profil trouvé pour l'ID <strong style="color:var(--cc-text)">{{ api.idBoutique }}</strong>. 
+      Vérifiez que votre boutique est créée en base.
+    </p>
+  </div>
+</div>
