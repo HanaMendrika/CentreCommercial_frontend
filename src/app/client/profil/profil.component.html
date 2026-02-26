@@ -1,0 +1,77 @@
+@if (toast) {
+  <div class="cl-toasts"><div class="cl-toast {{ toast.type }}">{{ toast.type === 'success' ? '✓' : 'ℹ' }} {{ toast.msg }}</div></div>
+}
+
+@if (loading) {
+  <div class="cl-loading" style="height:60vh"><div class="cl-spinner"></div></div>
+} @else {
+
+<div class="cl-profile-header">
+  <div class="cl-container" style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+    <div class="cl-profile-avatar">{{ initiale }}</div>
+    <div>
+      <div class="cl-profile-name">{{ client?.nom }}</div>
+      <div class="cl-profile-meta">{{ client?.mail }}</div>
+      <div class="cl-profile-meta" style="margin-top:.2rem">{{ client?.contact }}</div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:.75rem">
+      <a routerLink="/client/commandes" class="cl-btn cl-btn-outline cl-btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3)">Mes commandes</a>
+      <button class="cl-btn cl-btn-primary cl-btn-sm" (click)="logout()">↩ Déconnexion</button>
+    </div>
+  </div>
+</div>
+
+<section class="cl-section">
+  <div class="cl-container" style="max-width:680px">
+
+    <div class="cl-card" style="padding:1.75rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+        <h2 style="font-size:1.2rem;font-weight:700">Informations personnelles</h2>
+        @if (!editing) {
+          <button class="cl-btn cl-btn-outline cl-btn-sm" (click)="editing=true">✏️ Modifier</button>
+        }
+      </div>
+
+      @if (!editing) {
+        <div style="display:grid;gap:1rem">
+          <div><div style="font-size:.78rem;color:#b0a89e;font-weight:700;text-transform:uppercase;margin-bottom:.2rem">Nom</div><div>{{ client?.nom }}</div></div>
+          <div><div style="font-size:.78rem;color:#b0a89e;font-weight:700;text-transform:uppercase;margin-bottom:.2rem">Email</div><div>{{ client?.mail }}</div></div>
+          <div><div style="font-size:.78rem;color:#b0a89e;font-weight:700;text-transform:uppercase;margin-bottom:.2rem">Contact</div><div>{{ client?.contact || '—' }}</div></div>
+          <div><div style="font-size:.78rem;color:#b0a89e;font-weight:700;text-transform:uppercase;margin-bottom:.2rem">Adresse</div><div>{{ client?.adresse || '—' }}</div></div>
+        </div>
+      } @else {
+        <div class="cl-form-group">
+          <label class="cl-label">Nom</label>
+          <input type="text" class="cl-input" [(ngModel)]="form.nom">
+        </div>
+        <div class="cl-form-group">
+          <label class="cl-label">Email</label>
+          <input type="email" class="cl-input" [(ngModel)]="form.mail">
+        </div>
+        <div class="cl-form-group">
+          <label class="cl-label">Contact</label>
+          <input type="text" class="cl-input" [(ngModel)]="form.contact" placeholder="+261 …">
+        </div>
+        <div class="cl-form-group">
+          <label class="cl-label">Adresse</label>
+          <input type="text" class="cl-input" [(ngModel)]="form.adresse" placeholder="Votre adresse">
+        </div>
+        @if (error) { <p class="cl-error">{{ error }}</p> }
+        <div style="display:flex;gap:.75rem;margin-top:.5rem">
+          <button class="cl-btn cl-btn-primary" [disabled]="saving" (click)="save()">{{ saving ? 'Enregistrement…' : 'Enregistrer' }}</button>
+          <button class="cl-btn cl-btn-ghost" (click)="editing=false;resetForm()">Annuler</button>
+        </div>
+      }
+    </div>
+
+    <!-- Zone danger -->
+    <div class="cl-card" style="padding:1.5rem;margin-top:1.5rem;border:2px solid #ffebee">
+      <h3 style="font-size:1rem;color:#e53935;margin-bottom:.5rem">Zone dangereuse</h3>
+      <p style="font-size:.88rem;color:#6b5c50;margin-bottom:1rem">La suppression de votre compte est irréversible.</p>
+      <button class="cl-btn cl-btn-danger cl-btn-sm" (click)="deleteAccount()">Supprimer mon compte</button>
+    </div>
+
+  </div>
+</section>
+
+}

@@ -1,0 +1,64 @@
+<div class="cl-auth-wrap">
+  <div class="cl-auth-panel" style="max-width:520px">
+    <a routerLink="/" class="cl-auth-logo">
+      <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+        <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
+        <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".7"/>
+        <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".9"/>
+      </svg>
+      <span>Centre Commercial</span>
+    </a>
+
+    @if (success) {
+      <div style="text-align:center;padding:2rem 0">
+        <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+        <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:.5rem">Compte créé !</h2>
+        <p style="color:#6b5c50">Redirection vers la connexion…</p>
+      </div>
+    } @else {
+      <h1 class="cl-auth-title">Créer un compte</h1>
+      <p class="cl-auth-sub">Inscrivez-vous pour profiter de toutes les fonctionnalités</p>
+
+      <div class="cl-grid-2" style="gap:.75rem">
+        <div class="cl-form-group">
+          <label class="cl-label">Nom complet *</label>
+          <input type="text" class="cl-input" [(ngModel)]="form.nom" placeholder="Jean Dupont">
+        </div>
+        <div class="cl-form-group">
+          <label class="cl-label">Email *</label>
+          <input type="email" class="cl-input" [(ngModel)]="form.mail" placeholder="votre@email.com">
+        </div>
+      </div>
+
+      <div class="cl-grid-2" style="gap:.75rem">
+        <div class="cl-form-group">
+          <label class="cl-label">Mot de passe *</label>
+          <input type="password" class="cl-input" [(ngModel)]="form.mdp" placeholder="••••••••">
+        </div>
+        <div class="cl-form-group">
+          <label class="cl-label">Confirmer *</label>
+          <input type="password" class="cl-input" [(ngModel)]="form.mdpConfirm" placeholder="••••••••">
+        </div>
+      </div>
+
+      <div class="cl-form-group">
+        <label class="cl-label">Contact *</label>
+        <input type="text" class="cl-input" [(ngModel)]="form.contact" placeholder="+261 34 00 000 00">
+      </div>
+      <div class="cl-form-group">
+        <label class="cl-label">Adresse *</label>
+        <input type="text" class="cl-input" [(ngModel)]="form.adresse" placeholder="Votre adresse complète">
+      </div>
+
+      @if (error) { <p class="cl-error" style="margin-bottom:.75rem">{{ error }}</p> }
+
+      <button class="cl-btn cl-btn-primary cl-btn-block cl-btn-lg" [disabled]="loading" (click)="submit()">
+        {{ loading ? 'Création…' : 'Créer mon compte' }}
+      </button>
+
+      <p class="cl-auth-footer">
+        Déjà un compte ? <a routerLink="/client/login">Se connecter</a>
+      </p>
+    }
+  </div>
+</div>

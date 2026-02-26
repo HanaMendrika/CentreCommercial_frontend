@@ -1,0 +1,99 @@
+<div class="cl-page-header">
+  <div class="cl-container">
+    <div class="cl-breadcrumb"><a routerLink="/">Accueil</a><span>/</span><span>FoodCourt</span></div>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <span style="font-size:2.5rem">🍽️</span>
+      <div><h1>FoodCourt</h1><p>Restauration & café au cœur du centre</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bannière horaires -->
+<div style="background:#FBE248;padding:1.25rem 2rem">
+  <div class="cl-container" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+    <div>
+      <strong>🕐 Horaires FoodCourt</strong>
+      <p style="font-size:.88rem;margin-top:.2rem">Ouvert tous les jours · 10h00 – 22h00</p>
+    </div>
+    <div style="font-size:1.3rem;font-weight:700">{{ all.length }} restaurants</div>
+  </div>
+</div>
+
+<section class="cl-section">
+  <div class="cl-container">
+    <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px;position:relative">
+        <span style="position:absolute;left:.9rem;top:50%;transform:translateY(-50%)">🔍</span>
+        <input type="text" class="cl-input" placeholder="Rechercher un restaurant…"
+               [(ngModel)]="searchQ" (input)="filter()" style="padding-left:2.5rem">
+      </div>
+    </div>
+
+    <div class="cl-filter-bar">
+      <span class="cl-chip" [class.active]="activeCat===''" (click)="setCategory('')">Tous</span>
+      @for (c of categories; track c) {
+        <span class="cl-chip" [class.active]="activeCat===c" (click)="setCategory(c)">{{ c }}</span>
+      }
+    </div>
+
+    @if (loading) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (filtered.length === 0) {
+      <div class="cl-empty"><div class="cl-empty-icon">🔎</div><h3>Aucun restaurant trouvé</h3></div>
+    } @else {
+      <div class="cl-grid">
+        @for (b of filtered; track b.idboutique) {
+          <div class="cl-card cl-card-hover" (click)="openDetail(b.idboutique)">
+            <div class="cl-boutique-banner" style="background:linear-gradient(135deg,#5c3d2e,#372A21)">
+              {{ emoji(b.categorie) }}
+            </div>
+            <div class="cl-card-body">
+              <div class="cl-boutique-name">{{ b.libelle || b.nom }}</div>
+              <div class="cl-boutique-cat">{{ b.categorie || 'Restauration' }}</div>
+              @if (b.description) {
+                <p style="font-size:.8rem;color:#6b5c50;margin:.35rem 0 .4rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ b.description }}</p>
+              }
+              <div class="cl-boutique-meta" style="margin-top:.5rem">
+                <span>🕐 {{ b.horaires || '10h - 22h' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Modal détail -->
+@if (selected || loadingDetail) {
+  <div class="cl-modal-overlay" (click)="$event.target === $event.currentTarget && closeDetail()">
+    <div class="cl-modal">
+      @if (loadingDetail) {
+        <div class="cl-modal-body"><div class="cl-loading"><div class="cl-spinner"></div></div></div>
+      } @else if (selected) {
+        <div class="cl-modal-header">
+          <h2>{{ selected.libelle || selected.nom }}</h2>
+          <button class="cl-modal-close" (click)="closeDetail()">✕</button>
+        </div>
+        <div class="cl-modal-body">
+          <div style="text-align:center;font-size:3.5rem;margin-bottom:1.25rem">{{ emoji(selected.categorie) }}</div>
+          <div style="display:grid;gap:.85rem">
+            @if (selected.categorie) {
+              <div style="display:flex;gap:.75rem"><span>🏷️</span><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Catégorie</div><div>{{ selected.categorie }}</div></div></div>
+            }
+            @if (selected.description) {
+              <div style="display:flex;gap:.75rem"><span>📝</span><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Description</div><div>{{ selected.description }}</div></div></div>
+            }
+            <div style="display:flex;gap:.75rem"><span>🕐</span><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Horaires</div><div>{{ selected.horaires || '10h00 – 22h00' }}</div></div></div>
+            @if (selected.url) {
+              <div style="display:flex;gap:.75rem"><span>🌐</span><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Site web</div><a [href]="selected.url" target="_blank" style="color:#FBE248">{{ selected.url }}</a></div></div>
+            }
+          </div>
+          <a routerLink="/boutiques/{{ selected.idBoutique }}" class="cl-btn cl-btn-primary cl-btn-block" style="margin-top:1.5rem" (click)="closeDetail()">
+            Voir la carte complète
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+}

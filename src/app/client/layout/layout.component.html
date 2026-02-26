@@ -1,0 +1,101 @@
+<nav class="cl-navbar">
+  <!-- Logo -->
+  <a routerLink="/" class="cl-navbar-logo">
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
+      <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".7"/>
+      <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".9"/>
+    </svg>
+    <span>Centre<br>Commercial</span>
+  </a>
+
+  <!-- Liens -->
+  <div class="cl-navbar-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Accueil</a>
+    <a routerLink="/agenda" routerLinkActive="active">Agenda</a>
+    <a routerLink="/boutiques" routerLinkActive="active">Boutiques</a>
+    <a routerLink="/foodcourt" routerLinkActive="active">FoodCourt</a>
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/client/profil" routerLinkActive="active">Mon profil</a>
+    }
+  </div>
+
+  <!-- Recherche -->
+  <div class="cl-search-wrap" style="position:relative">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b0a89e" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input #searchInput type="text" placeholder="Boutiques, produits…"
+           [(ngModel)]="searchQuery" (input)="onSearchInput()" autocomplete="off">
+
+    @if (searchOpen) {
+      <div class="cl-search-dropdown">
+        @if (searchLoading) {
+          <div style="padding:1rem;color:#b0a89e;font-size:.88rem">Recherche…</div>
+        } @else if (searchResults.boutiques.length === 0) {
+          <div style="padding:1.25rem;text-align:center;color:#b0a89e;font-size:.88rem">
+            Aucun résultat pour « {{ searchQuery }} »
+          </div>
+        } @else {
+          <div style="padding:.6rem .75rem .2rem">
+            <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#b0a89e;font-weight:700;margin-bottom:.4rem">Boutiques</div>
+            @for (b of searchResults.boutiques; track b.idboutique) {
+              <div class="cl-search-result" (click)="goToBoutique(b.idboutique)">
+                <div class="cl-search-icon">{{ categoryEmoji(b.categorie) }}</div>
+                <div>
+                  <strong style="font-size:.88rem">{{ b.libelle || b.nom }}</strong>
+                  <p style="font-size:.78rem;color:#6b5c50;margin:0">{{ b.categorie || 'Boutique' }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Auth -->
+  <div style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/client/profil" class="cl-avatar" [title]="client?.nom || ''">{{ initiale }}</a>
+      <button class="cl-btn cl-btn-ghost cl-btn-sm" style="color:#d8c9be" (click)="logout()">↩</button>
+    } @else {
+      <a routerLink="/client/login" class="cl-btn cl-btn-primary cl-btn-sm">Connexion</a>
+    }
+  </div>
+</nav>
+
+<router-outlet />
+
+<!-- Footer -->
+<footer class="cl-footer">
+  <div class="cl-container">
+    <div class="cl-footer-grid">
+      <div>
+        <h4>Centre Commercial</h4>
+        <p style="font-size:.88rem;margin-top:.4rem">Votre destination shopping préférée.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a routerLink="/">Accueil</a></li>
+          <li><a routerLink="/boutiques">Boutiques</a></li>
+          <li><a routerLink="/foodcourt">FoodCourt</a></li>
+          <li><a routerLink="/agenda">Agenda</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Mon compte</h4>
+        <ul>
+          <li><a routerLink="/client/login">Connexion</a></li>
+          <li><a routerLink="/client/register">Inscription</a></li>
+          <li><a routerLink="/client/profil">Mon profil</a></li>
+          <li><a routerLink="/client/commandes">Mes commandes</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cl-footer-bottom">
+      <span>© 2026 Centre Commercial. Tous droits réservés.</span>
+    </div>
+  </div>
+</footer>

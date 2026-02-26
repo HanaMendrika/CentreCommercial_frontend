@@ -1,0 +1,123 @@
+<!-- HERO -->
+<section class="cl-hero">
+  <div class="cl-container">
+    <div style="max-width:600px">
+      <h1>Bienvenue au<br><span>Centre Commercial</span></h1>
+      <p>Découvrez nos boutiques, promotions exclusives et savourez l'expérience du shopping.</p>
+      <div class="cl-hero-actions">
+        <a routerLink="/boutiques" class="cl-btn cl-btn-primary cl-btn-lg">Explorer les boutiques</a>
+        <a routerLink="/agenda"    class="cl-btn cl-btn-outline cl-btn-lg">Voir l'agenda</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMOTIONS -->
+<section class="cl-section cl-section-white">
+  <div class="cl-container">
+    <div class="cl-section-header">
+      <h2 class="cl-section-title">Promotions en cours</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm">Voir tout →</a>
+    </div>
+
+    @if (loading.promos) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (promos.length === 0) {
+      <div class="cl-empty"><div class="cl-empty-icon">🏷️</div><h3>Aucune promotion en cours</h3></div>
+    } @else {
+      <div class="cl-grid">
+        @for (p of promos; track p._id) {
+          <div class="cl-promo-card">
+            <div>
+              <h3 style="font-size:1rem;font-weight:700;color:#372A21">{{ p.libelle || 'Promotion' }}</h3>
+              <p style="font-size:.83rem;color:#4e3d30">{{ p.boutique?.libelle || 'Toutes boutiques' }}</p>
+              @if (p.dateFin) {
+                <p style="font-size:.75rem;margin-top:.25rem;color:#4e3d30">Jusqu'au {{ formatDate(p.dateFin) }}</p>
+              }
+            </div>
+            <div class="cl-promo-value">{{ p.valeur ? '-' + p.valeur + '%' : '🎉' }}</div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- BOUTIQUES OUVERTES -->
+<section class="cl-section">
+  <div class="cl-container">
+    <div class="cl-section-header">
+      <h2 class="cl-section-title">Ouvertes maintenant</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm">Toutes les boutiques →</a>
+    </div>
+
+    @if (loading.open) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (boutiquesOpen.length === 0) {
+      <div class="cl-empty"><div class="cl-empty-icon">🔒</div><h3>Aucune boutique ouverte en ce moment</h3></div>
+    } @else {
+      <div class="cl-grid">
+        @for (b of boutiquesOpen; track b.idboutique) {
+          <a routerLink="/boutiques/{{ b.idboutique }}" style="text-decoration:none">
+            <div class="cl-card cl-card-hover">
+              <div class="cl-boutique-banner">{{ emoji(b.categorie) }}
+                <div style="position:absolute;top:8px;right:8px"><span class="cl-badge cl-badge-open">Ouvert</span></div>
+              </div>
+              <div class="cl-card-body">
+                <div class="cl-boutique-name">{{ b.libelle || b.nom }}</div>
+                <div class="cl-boutique-cat">{{ b.categorie || 'Divers' }}</div>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- FOODCOURT TEASER -->
+<section class="cl-section cl-section-white">
+  <div class="cl-container">
+    <div style="background:#372A21;border-radius:20px;padding:3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
+      <div>
+        <div style="color:#FBE248;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem">Espace restauration</div>
+        <h2 style="color:#fff;font-size:1.7rem;font-weight:700;margin-bottom:.7rem">Découvrez notre FoodCourt</h2>
+        <p style="color:#d8c9be;max-width:420px;font-size:.93rem">Large sélection de restaurants, snacks et cafés au cœur du centre commercial.</p>
+      </div>
+      <a routerLink="/foodcourt" class="cl-btn cl-btn-primary cl-btn-lg">Voir le FoodCourt</a>
+    </div>
+  </div>
+</section>
+
+<!-- TOUTES LES BOUTIQUES -->
+<section class="cl-section">
+  <div class="cl-container">
+    <div class="cl-section-header">
+      <h2 class="cl-section-title">Nos boutiques</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm">Voir tout →</a>
+    </div>
+
+    @if (loading.all) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (boutiques.length === 0) {
+      <div class="cl-empty"><div class="cl-empty-icon">🏪</div><h3>Aucune boutique disponible</h3></div>
+    } @else {
+      <div class="cl-grid">
+        @for (b of boutiques; track b.idboutique) {
+          <a routerLink="/boutiques/{{ b.idboutique }}" style="text-decoration:none">
+            <div class="cl-card cl-card-hover">
+              <div class="cl-boutique-banner">{{ emoji(b.categorie) }}</div>
+              <div class="cl-card-body">
+                <div class="cl-boutique-name">{{ b.libelle || b.nom }}</div>
+                <div class="cl-boutique-cat">{{ b.categorie || 'Divers' }}</div>
+                <div class="cl-boutique-meta" style="margin-top:.5rem">
+                  <span>🕐 {{ b.horaires || 'Voir horaires' }}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
