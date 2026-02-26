@@ -30,7 +30,7 @@ export class CommandesClientComponent implements OnInit {
   annuler(id: string): void {
     if (!confirm('Annuler cette commande ?')) return;
     this.api.annulerCommande(id).subscribe({
-      next: () => { this.commandes = this.commandes.filter(c => c._id !== id); this.showToast('Commande annulée', 'info'); },
+      next: () => { this.commandes = this.commandes.filter(c => c.idcommande !== id); this.showToast('Commande annulée', 'info'); },
       error: (e) => this.showToast(e.error?.message || 'Impossible d\'annuler', 'error')
     });
   }

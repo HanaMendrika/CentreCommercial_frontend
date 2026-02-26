@@ -41,8 +41,8 @@
             <div class="cl-order-items">
               @for (item of c.produits; track $index) {
                 <div class="cl-order-item">
-                  <span>{{ item.produit?.nom || item.nom || 'Produit' }} × {{ item.quantite || 1 }}</span>
-                  <span>{{ item.produit?.prix ? (item.produit.prix * (item.quantite||1) | number:'1.0-0') + ' Ar' : '—' }}</span>
+                  <span>{{ item.libelle || 'Produit' }} × {{ item.quantite || 1 }}</span>
+                  <span>{{ item.prix ? (item.prix * (item.quantite||1) | number:'1.0-0') + ' Ar' : '—' }}</span>
                 </div>
               }
             </div>
@@ -58,7 +58,7 @@
 
           @if (c.statut !== 'livree' && c.statut !== 'annulee') {
             <div style="display:flex;justify-content:flex-end;margin-top:.75rem">
-              <button class="cl-btn cl-btn-danger cl-btn-sm" (click)="annuler(c._id)">Annuler la commande</button>
+              <button class="cl-btn cl-btn-danger cl-btn-sm" (click)="annuler(c.idcommande)">Annuler la commande</button>
             </div>
           }
         </div>
