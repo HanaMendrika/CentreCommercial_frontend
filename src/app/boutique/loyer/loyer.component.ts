@@ -9,126 +9,8 @@ const MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août'
   selector: 'app-loyer',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="cc-page">
-      <div class="cc-page-header">
-        <div>
-          <h1 class="cc-page-title">Paiement du loyer</h1>
-          <p class="cc-page-sub">Historique et gestion des loyers</p>
-        </div>
-        <button class="cc-btn-primary" (click)="openAdd()">+ Enregistrer un paiement</button>
-      </div>
-
-      <!-- Stats -->
-      <div class="cc-stats">
-        <div class="cc-stat">
-          <div class="cc-stat-label">Total payé</div>
-          <div class="cc-stat-value">{{ totalPaye | number:'1.0-0' }} Ar</div>
-        </div>
-        <div class="cc-stat">
-          <div class="cc-stat-label">Paiements</div>
-          <div class="cc-stat-value">{{ items.length }}</div>
-        </div>
-      </div>
-
-      <!-- Filtres -->
-      <div class="cc-filters">
-        <select class="cc-select" style="width:150px" [(ngModel)]="filterMois">
-          <option value="">Tous les mois</option>
-          <option *ngFor="let m of moisList; let i = index" [value]="i+1">{{ m }}</option>
-        </select>
-        <input class="cc-input" style="width:120px" type="number" [(ngModel)]="filterAnnee" placeholder="Année" />
-        <button class="cc-btn-primary" (click)="load()">Filtrer</button>
-      </div>
-
-      <div *ngIf="error" class="cc-error">{{ error }}</div>
-      <div *ngIf="loading" class="cc-loading">Chargement...</div>
-
-      <ng-container *ngIf="!loading">
-        <div *ngIf="items.length === 0" class="cc-table-wrap">
-          <div class="cc-empty">
-            <div class="cc-empty-icon">💰</div>
-            <p>Aucun paiement enregistré</p>
-          </div>
-        </div>
-
-        <div *ngIf="items.length > 0" class="cc-table-wrap">
-          <table class="cc-table">
-            <thead>
-              <tr>
-                <th>Période</th>
-                <th>Montant</th>
-                <th>Date paiement</th>
-                <th>Statut</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let l of items">
-                <td><strong>{{ moisLabel(l.mois) }} {{ l.annee }}</strong></td>
-                <td style="color:var(--cc-accent);font-weight:600">{{ l.montant | number:'1.0-0' }} Ar</td>
-                <td>{{ l.datePaiement | date:'dd/MM/yyyy' }}</td>
-                <td><span class="cc-badge" [ngClass]="statusBadge(l.idStatus)">{{ l.idStatus }}</span></td>
-                <td>
-                  <div class="cc-actions">
-                    <button class="cc-btn-icon" (click)="openEdit(l)" title="Modifier">✏️</button>
-                    <button class="cc-btn-icon danger" (click)="delete(l.idLoyer)" title="Supprimer">🗑️</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </ng-container>
-    </div>
-
-    <!-- MODAL -->
-    <div class="cc-overlay" *ngIf="showModal" (click)="close()">
-      <div class="cc-modal" (click)="$event.stopPropagation()">
-        <div class="cc-modal-hd">
-          <h3 class="cc-modal-title">{{ isEdit ? 'Modifier le paiement' : 'Nouveau paiement' }}</h3>
-          <button class="cc-modal-close" (click)="close()">×</button>
-        </div>
-        <div *ngIf="formError" class="cc-error">{{ formError }}</div>
-
-        <div class="cc-fg-row">
-          <div class="cc-fg">
-            <label class="cc-label">Mois *</label>
-            <select class="cc-select" [(ngModel)]="form.mois">
-              <option *ngFor="let m of moisList; let i = index" [value]="i+1">{{ m }}</option>
-            </select>
-          </div>
-          <div class="cc-fg">
-            <label class="cc-label">Année *</label>
-            <input class="cc-input" type="number" [(ngModel)]="form.annee" placeholder="2025" />
-          </div>
-        </div>
-        <div class="cc-fg">
-          <label class="cc-label">Montant (Ar) *</label>
-          <input class="cc-input" type="number" [(ngModel)]="form.montant" placeholder="150000" />
-        </div>
-        <div class="cc-fg">
-          <label class="cc-label">Date de paiement *</label>
-          <input class="cc-input" type="date" [(ngModel)]="form.datePaiement" />
-        </div>
-        <div class="cc-fg">
-          <label class="cc-label">Statut *</label>
-          <select class="cc-select" [(ngModel)]="form.idStatus">
-            <option value="payé">Payé</option>
-            <option value="en attente">En attente</option>
-            <option value="retard">En retard</option>
-          </select>
-        </div>
-
-        <div class="cc-modal-ft">
-          <button class="cc-btn-ghost" (click)="close()">Annuler</button>
-          <button class="cc-btn-primary" (click)="save()" [disabled]="saving">
-            {{ saving ? 'Enregistrement...' : (isEdit ? 'Modifier' : 'Ajouter') }}
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  templateUrl: './loyer.component.html',
+  // styleUrls: ['./loyer.component.css']
 })
 export class LoyerComponent implements OnInit {
   items: any[] = [];
@@ -145,7 +27,9 @@ export class LoyerComponent implements OnInit {
 
   constructor(private api: BoutiqueApiService) {}
 
-  ngOnInit() { this.load(); }
+  ngOnInit() { 
+    this.load(); 
+  }
 
   // only include loyer entries that have been marked as paid
   get totalPaye() {
@@ -154,7 +38,9 @@ export class LoyerComponent implements OnInit {
       .reduce((s, l) => s + (l.montant || 0), 0);
   }
 
-  moisLabel(m: number) { return MOIS[m - 1] || m; }
+  moisLabel(m: number) { 
+    return MOIS[m - 1] || m; 
+  }
 
   statusBadge(s: string) {
     if (s === 'payé') return 'cc-badge-success';
@@ -163,42 +49,83 @@ export class LoyerComponent implements OnInit {
   }
 
   load() {
-    this.loading = true; this.error = '';
+    this.loading = true; 
+    this.error = '';
+    
     const f: any = {};
     if (this.filterMois) f.mois = this.filterMois;
     if (this.filterAnnee) f.annee = this.filterAnnee;
+    
     this.api.getLoyers(f).subscribe({
-      next: d => { this.items = Array.isArray(d) ? d : []; this.loading = false; },
-      error: e => { this.error = e.error?.message || 'Erreur'; this.loading = false; }
+      next: d => { 
+        this.items = Array.isArray(d) ? d : []; 
+        this.loading = false; 
+      },
+      error: e => { 
+        this.error = e.error?.message || 'Erreur'; 
+        this.loading = false; 
+      }
     });
   }
 
   openAdd() {
-    this.form = { mois: 1, annee: new Date().getFullYear(), idStatus: 'payé', datePaiement: new Date().toISOString().slice(0,10) };
-    this.isEdit = false; this.formError = ''; this.showModal = true;
+    this.form = { 
+      mois: 1, 
+      annee: new Date().getFullYear(), 
+      idStatus: 'payé', 
+      datePaiement: new Date().toISOString().slice(0,10) 
+    };
+    this.isEdit = false; 
+    this.formError = ''; 
+    this.showModal = true;
   }
+
   openEdit(l: any) {
-    this.form = { ...l, datePaiement: l.datePaiement?.slice(0, 10) };
-    this.isEdit = true; this.formError = ''; this.showModal = true;
+    this.form = { 
+      ...l, 
+      datePaiement: l.datePaiement?.slice(0, 10) 
+    };
+    this.isEdit = true; 
+    this.formError = ''; 
+    this.showModal = true;
   }
-  close() { this.showModal = false; }
+
+  close() { 
+    this.showModal = false; 
+  }
 
   save() {
     if (!this.form.mois || !this.form.annee || !this.form.montant || !this.form.datePaiement || !this.form.idStatus) {
-      this.formError = 'Tous les champs sont requis.'; return;
+      this.formError = 'Tous les champs sont requis.';
+      return;
     }
-    this.saving = true; this.formError = '';
+    
+    this.saving = true; 
+    this.formError = '';
+    
     const obs = this.isEdit
       ? this.api.updateLoyer(this.form.idLoyer, this.form)
       : this.api.addLoyer(this.form);
+    
     obs.subscribe({
-      next: () => { this.saving = false; this.close(); this.load(); },
-      error: e => { this.formError = e.error?.message || 'Erreur'; this.saving = false; }
+      next: () => { 
+        this.saving = false; 
+        this.close(); 
+        this.load(); 
+      },
+      error: e => { 
+        this.formError = e.error?.message || 'Erreur'; 
+        this.saving = false; 
+      }
     });
   }
 
   delete(id: string) {
     if (!confirm('Supprimer ce paiement ?')) return;
-    this.api.deleteLoyer(id).subscribe({ next: () => this.load(), error: e => this.error = e.error?.message || 'Erreur' });
+    
+    this.api.deleteLoyer(id).subscribe({ 
+      next: () => this.load(), 
+      error: e => this.error = e.error?.message || 'Erreur' 
+    });
   }
 }

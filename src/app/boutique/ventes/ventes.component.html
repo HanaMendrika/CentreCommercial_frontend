@@ -1,0 +1,74 @@
+<div class="cc-page">
+  <div class="cc-page-header">
+    <div>
+      <h1 class="cc-page-title"><img src="/icons/vente.png" alt=""> Ventes</h1>
+      <p class="cc-page-sub">Historique et statistiques des ventes</p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="cc-stats">
+    <div class="cc-stat">
+      <div class="cc-stat-label">Chiffre d'affaires</div>
+      <div class="cc-stat-value accent">{{ stats?.chiffreAffaires | number:'1.0-0' }} Ar</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Nombre de ventes</div>
+      <div class="cc-stat-value">{{ stats?.nbVentes ?? 0 }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Panier moyen</div>
+      <div class="cc-stat-value">
+        {{ (stats?.nbVentes ? (stats.chiffreAffaires / stats.nbVentes) : 0) | number:'1.0-0' }} Ar
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="cc-filters">
+    <input class="cc-input" style="width:175px" type="date" [(ngModel)]="dateDebut" placeholder="Date début" />
+    <input class="cc-input" style="width:175px" type="date" [(ngModel)]="dateFin" placeholder="Date fin" />
+    <input class="cc-input" style="width:175px" [(ngModel)]="idAcheteur" placeholder="ID Client" />
+    <input class="cc-input" style="width:175px" [(ngModel)]="idProduit" placeholder="ID Produit" />
+    <button class="cc-btn-primary" (click)="load()">Filtrer</button>
+  </div>
+
+  <div *ngIf="error" class="cc-error">{{ error }}</div>
+  <div *ngIf="loading" class="cc-loading"><div class="loader"></div></div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="items.length === 0" class="cc-table-wrap">
+      <div class="cc-empty">
+        <div class="cc-empty-icon"><img src="/icons/question.png" alt=""></div>
+        <p>Aucune vente enregistrée</p>
+      </div>
+    </div>
+
+    <div *ngIf="items.length > 0" class="cc-table-wrap">
+      <table class="cc-table">
+        <thead>
+          <tr>
+            <th>ID Vente</th>
+            <th>Produit</th>
+            <th>Client</th>
+            <th>Quantité</th>
+            <th>Prix unitaire</th>
+            <th>Total</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of items">
+            <td><span class="cc-badge cc-badge-neutral">{{ v.idVente }}</span></td>
+            <td>{{ v.idProduit }}</td>
+            <td>{{ v.idAcheteur }}</td>
+            <td>{{ v.quantite }}</td>
+            <td>{{ v.prix | number:'1.0-0' }} Ar</td>
+            <td style="color:var(--cc-accent);font-weight:600">{{ (v.prix * v.quantite) | number:'1.0-0' }} Ar</td>
+            <td style="font-size:.82rem;color:var(--cc-muted)">{{ v.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>

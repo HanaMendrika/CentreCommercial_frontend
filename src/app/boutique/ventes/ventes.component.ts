@@ -7,82 +7,7 @@ import { BoutiqueApiService } from '../../services/boutique-api.service';
   selector: 'app-ventes',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="cc-page">
-      <div class="cc-page-header">
-        <div>
-          <h1 class="cc-page-title">Ventes</h1>
-          <p class="cc-page-sub">Historique et statistiques des ventes</p>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="cc-stats">
-        <div class="cc-stat">
-          <div class="cc-stat-label">Chiffre d'affaires</div>
-          <div class="cc-stat-value accent">{{ stats?.chiffreAffaires | number:'1.0-0' }} Ar</div>
-        </div>
-        <div class="cc-stat">
-          <div class="cc-stat-label">Nombre de ventes</div>
-          <div class="cc-stat-value">{{ stats?.nbVentes ?? 0 }}</div>
-        </div>
-        <div class="cc-stat">
-          <div class="cc-stat-label">Panier moyen</div>
-          <div class="cc-stat-value">
-            {{ (stats?.nbVentes ? (stats.chiffreAffaires / stats.nbVentes) : 0) | number:'1.0-0' }} Ar
-          </div>
-        </div>
-      </div>
-
-      <!-- Filtres -->
-      <div class="cc-filters">
-        <input class="cc-input" style="width:175px" type="date" [(ngModel)]="dateDebut" placeholder="Date début" />
-        <input class="cc-input" style="width:175px" type="date" [(ngModel)]="dateFin" placeholder="Date fin" />
-        <input class="cc-input" style="width:175px" [(ngModel)]="idAcheteur" placeholder="ID Client" />
-        <input class="cc-input" style="width:175px" [(ngModel)]="idProduit" placeholder="ID Produit" />
-        <button class="cc-btn-primary" (click)="load()">Filtrer</button>
-      </div>
-
-      <div *ngIf="error" class="cc-error">{{ error }}</div>
-      <div *ngIf="loading" class="cc-loading">Chargement...</div>
-
-      <ng-container *ngIf="!loading">
-        <div *ngIf="items.length === 0" class="cc-table-wrap">
-          <div class="cc-empty">
-            <div class="cc-empty-icon">📊</div>
-            <p>Aucune vente enregistrée</p>
-          </div>
-        </div>
-
-        <div *ngIf="items.length > 0" class="cc-table-wrap">
-          <table class="cc-table">
-            <thead>
-              <tr>
-                <th>ID Vente</th>
-                <th>Produit</th>
-                <th>Client</th>
-                <th>Quantité</th>
-                <th>Prix unitaire</th>
-                <th>Total</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let v of items">
-                <td><span class="cc-badge cc-badge-neutral">{{ v.idVente }}</span></td>
-                <td>{{ v.idProduit }}</td>
-                <td>{{ v.idAcheteur }}</td>
-                <td>{{ v.quantite }}</td>
-                <td>{{ v.prix | number:'1.0-0' }} Ar</td>
-                <td style="color:var(--cc-accent);font-weight:600">{{ (v.prix * v.quantite) | number:'1.0-0' }} Ar</td>
-                <td style="font-size:.82rem;color:var(--cc-muted)">{{ v.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </ng-container>
-    </div>
-  `
+  templateUrl: './ventes.component.html'
 })
 export class VentesComponent implements OnInit {
   items: any[] = [];
@@ -96,10 +21,14 @@ export class VentesComponent implements OnInit {
 
   constructor(private api: BoutiqueApiService) {}
 
-  ngOnInit() { this.load(); }
+  ngOnInit() { 
+    this.load(); 
+  }
 
   load() {
-    this.loading = true; this.error = '';
+    this.loading = true; 
+    this.error = '';
+    
     const f: any = {};
     if (this.dateDebut) f.dateDebut = this.dateDebut;
     if (this.dateFin) f.dateFin = this.dateFin;
@@ -107,9 +36,19 @@ export class VentesComponent implements OnInit {
     if (this.idProduit) f.idProduit = this.idProduit;
 
     this.api.getVentes(f).subscribe({
-      next: d => { this.items = Array.isArray(d) ? d : []; this.loading = false; },
-      error: e => { this.error = e.error?.message || 'Erreur'; this.loading = false; }
+      next: d => { 
+        this.items = Array.isArray(d) ? d : []; 
+        this.loading = false; 
+      },
+      error: e => { 
+        this.error = e.error?.message || 'Erreur'; 
+        this.loading = false; 
+      }
     });
-    this.api.getVentesStats(f).subscribe({ next: d => this.stats = d, error: () => {} });
+    
+    this.api.getVentesStats(f).subscribe({ 
+      next: d => this.stats = d, 
+      error: () => {} 
+    });
   }
 }
