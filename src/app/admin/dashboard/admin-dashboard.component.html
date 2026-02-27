@@ -1,0 +1,239 @@
+<div class="cc-page">
+  <div class="cc-page-header">
+    <div>
+      <h1 class="cc-page-title"><img src="/icons/dashboard.png" alt=""> Tableau de bord</h1>
+      <p class="cc-page-sub">Vue d'ensemble du centre commercial</p>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="cc-stats">
+    <div class="cc-stat">
+      <div class="cc-stat-label">Total clients</div>
+      <div class="cc-stat-value accent">{{ totalClients ?? '—' }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">CA période</div>
+      <div class="cc-stat-value">{{ salesStats?.totalVentes | number:'1.0-0' }} Ar</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Clients actifs</div>
+      <div class="cc-stat-value">{{ salesStats?.totalClients ?? '—' }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Boutiques actives</div>
+      <div class="cc-stat-value">{{ salesStats?.totalBoutiques ?? '—' }}</div>
+    </div>
+  </div>
+
+  <!-- Filtre période ventes -->
+  <div class="cc-card" style="margin-bottom:20px">
+    <h3 class="cc-card-title">Ventes par période</h3>
+    <div class="cc-fg-row" style="align-items:flex-end;gap:12px;margin-bottom:12px">
+      <div class="cc-fg" style="flex:1">
+        <label class="cc-label">Date début</label>
+        <input type="date" class="cc-input" [(ngModel)]="salesStart">
+      </div>
+      <div class="cc-fg" style="flex:1">
+        <label class="cc-label">Date fin</label>
+        <input type="date" class="cc-input" [(ngModel)]="salesEnd">
+      </div>
+      <button class="cc-btn-primary" (click)="filterSales()" [disabled]="salesLoading">
+        {{ salesLoading ? 'Chargement...' : 'Filtrer' }}
+      </button>
+    </div>
+    <div *ngIf="salesStats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div class="cc-stat" style="margin:0">
+        <div class="cc-stat-label">Chiffre d'affaires</div>
+        <div class="cc-stat-value accent">{{ salesStats.totalVentes | number:'1.0-2' }} Ar</div>
+      </div>
+      <div class="cc-stat" style="margin:0">
+        <div class="cc-stat-label">Clients</div>
+        <div class="cc-stat-value">{{ salesStats.totalClients }}</div>
+      </div>
+      <div class="cc-stat" style="margin:0">
+        <div class="cc-stat-label">Boutiques</div>
+        <div class="cc-stat-value">{{ salesStats.totalBoutiques }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs classements -->
+  <div class="cc-card" style="margin-bottom:20px">
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="cc-btn-tab" [class.active]="activeTab==='acheteurs'" (click)="activeTab='acheteurs'">
+        Top acheteurs
+      </button>
+      <button class="cc-btn-tab" [class.active]="activeTab==='depenseurs'" (click)="activeTab='depenseurs'">
+        Top dépensiers
+      </button>
+      <button class="cc-btn-tab" [class.active]="activeTab==='boutiques'" (click)="activeTab='boutiques'">
+        Top boutiques
+      </button>
+      <button class="cc-btn-tab" [class.active]="activeTab==='produits'" (click)="activeTab='produits'">
+        Top produits
+      </button>
+    </div>
+
+    <!-- Top acheteurs -->
+    <ng-container *ngIf="activeTab==='acheteurs'">
+      <h3 class="cc-card-title">Clients qui achètent le plus souvent</h3>
+      <div *ngIf="loading" class="cc-loading"><div class="loader"></div></div>
+      <div *ngIf="!loading && topBuyers.length===0" class="cc-empty">
+        <div class="cc-empty-icon">👥</div>
+        <p>Aucune donnée disponible</p>
+      </div>
+      <table *ngIf="topBuyers.length > 0" class="cc-table">
+        <thead><tr><th>#</th><th>ID Client</th><th>Nombre d'achats</th><th>Barre</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let b of topBuyers; let i = index">
+            <td><span class="rank-badge">{{ i+1 }}</span></td>
+            <td><strong>{{ b._id }}</strong></td>
+            <td>{{ b.nombreAchats }}</td>
+            <td style="width:200px">
+              <div style="background:rgba(251,226,72,.12);border-radius:6px;height:10px">
+                <div style="background:#FBE248;border-radius:6px;height:10px;transition:.3s"
+                     [style.width.%]="topBuyers[0]?.nombreAchats ? (b.nombreAchats/topBuyers[0].nombreAchats)*100 : 0">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+
+    <!-- Top dépensiers -->
+    <ng-container *ngIf="activeTab==='depenseurs'">
+      <h3 class="cc-card-title">Clients qui dépensent le plus</h3>
+      <div *ngIf="topSpenders.length===0" class="cc-empty">
+        <div class="cc-empty-icon">💳</div>
+        <p>Aucune donnée disponible</p>
+      </div>
+      <table *ngIf="topSpenders.length > 0" class="cc-table">
+        <thead><tr><th>#</th><th>ID Client</th><th>Total dépensé (Ar)</th><th>Barre</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let s of topSpenders; let i = index">
+            <td><span class="rank-badge">{{ i+1 }}</span></td>
+            <td><strong>{{ s._id }}</strong></td>
+            <td>{{ s.totalDepense | number:'1.0-0' }}</td>
+            <td style="width:200px">
+              <div style="background:rgba(251,226,72,.12);border-radius:6px;height:10px">
+                <div style="background:#FBE248;border-radius:6px;height:10px;transition:.3s"
+                     [style.width.%]="topSpenders[0]?.totalDepense ? (s.totalDepense/topSpenders[0].totalDepense)*100 : 0">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+
+    <!-- Top boutiques -->
+    <ng-container *ngIf="activeTab==='boutiques'">
+      <h3 class="cc-card-title">Boutiques qui vendent le plus</h3>
+      <div *ngIf="topBoutiques.length===0" class="cc-empty">
+        <div class="cc-empty-icon">🏪</div>
+        <p>Aucune donnée disponible</p>
+      </div>
+      <table *ngIf="topBoutiques.length > 0" class="cc-table">
+        <thead><tr><th>#</th><th>Boutique</th><th>Total ventes (Ar)</th><th>Barre</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let b of topBoutiques; let i = index">
+            <td><span class="rank-badge">{{ i+1 }}</span></td>
+            <td><strong>{{ b._id }}</strong></td>
+            <td>{{ b.totalVentes | number:'1.0-0' }}</td>
+            <td style="width:200px">
+              <div style="background:rgba(251,226,72,.12);border-radius:6px;height:10px">
+                <div style="background:#FBE248;border-radius:6px;height:10px;transition:.3s"
+                     [style.width.%]="topBoutiques[0]?.totalVentes ? (b.totalVentes/topBoutiques[0].totalVentes)*100 : 0">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+
+    <!-- Top produits -->
+    <ng-container *ngIf="activeTab==='produits'">
+      <h3 class="cc-card-title">Produits les plus vendus</h3>
+      <div *ngIf="topProducts.length===0" class="cc-empty">
+        <div class="cc-empty-icon">📦</div>
+        <p>Aucune donnée disponible</p>
+      </div>
+      <table *ngIf="topProducts.length > 0" class="cc-table">
+        <thead><tr><th>#</th><th>ID Produit</th><th>Quantité vendue</th><th>Barre</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let p of topProducts; let i = index">
+            <td><span class="rank-badge">{{ i+1 }}</span></td>
+            <td><strong>{{ p._id }}</strong></td>
+            <td>{{ p.totalVentes }}</td>
+            <td style="width:200px">
+              <div style="background:rgba(251,226,72,.12);border-radius:6px;height:10px">
+                <div style="background:#FBE248;border-radius:6px;height:10px;transition:.3s"
+                     [style.width.%]="topProducts[0]?.totalVentes ? (p.totalVentes/topProducts[0].totalVentes)*100 : 0">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+  </div>
+
+  <!-- Historique client -->
+  <div class="cc-card">
+    <h3 class="cc-card-title">Historique d'un client</h3>
+    <div class="cc-fg-row" style="align-items:flex-end;gap:12px;margin-bottom:16px">
+      <div class="cc-fg" style="flex:1">
+        <label class="cc-label">ID Acheteur</label>
+        <input class="cc-input" [(ngModel)]="historyId" placeholder="Ex: ACHAT001">
+      </div>
+      <button class="cc-btn-primary" (click)="loadClientHistory()" [disabled]="historyLoading">
+        {{ historyLoading ? 'Recherche...' : 'Voir historique' }}
+      </button>
+    </div>
+    <div *ngIf="historyError" class="cc-error">{{ historyError }}</div>
+    <div *ngIf="clientHistory.length > 0">
+      <table class="cc-table">
+        <thead><tr><th>ID Vente</th><th>Produit</th><th>Boutique</th><th>Quantité</th><th>Prix</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let v of clientHistory">
+            <td>{{ v.idVente }}</td>
+            <td>{{ v.idProduit }}</td>
+            <td>{{ v.idBoutique }}</td>
+            <td>{{ v.quantite }}</td>
+            <td>{{ v.prix | number:'1.0-0' }} Ar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="!historyLoading && !historyError && clientHistory.length===0 && historyId"
+         class="cc-empty">
+      <p>Aucune vente trouvée pour ce client</p>
+    </div>
+  </div>
+</div>
+
+<style>
+.cc-btn-tab {
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(251,226,72,0.3);
+  background: transparent;
+  color: var(--cc-muted);
+  font-size: .82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .18s;
+}
+.cc-btn-tab:hover { background: rgba(251,226,72,.08); color: var(--cc-text); }
+.cc-btn-tab.active { background: rgba(251,226,72,.18); color: #FBE248; border-color: #FBE248; font-weight: 600; }
+.cc-card-title { color: var(--cc-text); font-size: .95rem; font-weight: 700; margin: 0 0 16px; }
+.rank-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(251,226,72,.15); color: #FBE248;
+  font-size: .78rem; font-weight: 700;
+}
+</style>

@@ -1,0 +1,180 @@
+<div class="cc-page">
+  <div class="cc-page-header">
+    <div>
+      <h1 class="cc-page-title"><img src="/icons/produits.png" alt=""> Gestion des boutiques</h1>
+      <p class="cc-page-sub">Créez, modifiez et suivez les boutiques du centre</p>
+    </div>
+    <button class="cc-btn-primary" (click)="openAdd()">+ Nouvelle boutique</button>
+  </div>
+
+  <!-- Filtres -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+    <button class="cc-btn-filter" [class.active]="filterMode==='all'"     (click)="setFilter('all')">Toutes</button>
+    <button class="cc-btn-filter" [class.active]="filterMode==='open'"    (click)="setFilter('open')">Ouvertes</button>
+    <button class="cc-btn-filter" [class.active]="filterMode==='closed'"  (click)="setFilter('closed')">Fermées</button>
+    <button class="cc-btn-filter success" [class.active]="filterMode==='paye'"   (click)="setFilter('paye')">✅ Loyer payé</button>
+    <button class="cc-btn-filter danger"  [class.active]="filterMode==='nonpaye'" (click)="setFilter('nonpaye')">⚠️ Loyer impayé</button>
+  </div>
+
+  <div *ngIf="error" class="cc-error">{{ error }}</div>
+  <div *ngIf="loading" class="cc-loading"><div class="loader"></div></div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="items.length === 0" class="cc-table-wrap">
+      <div class="cc-empty">
+        <div class="cc-empty-icon">🏪</div>
+        <p>Aucune boutique trouvée</p>
+      </div>
+    </div>
+
+    <!-- Vue loyer PAYÉ (retourne des enregistrements Loyer) -->
+    <div *ngIf="items.length > 0 && filterMode === 'paye'" class="cc-table-wrap">
+      <div class="cc-info-banner">
+        Paiements du mois en cours — {{ items.length }} boutique(s) à jour
+      </div>
+      <table class="cc-table">
+        <thead>
+          <tr>
+            <th>ID Boutique</th>
+            <th>Mois / Année</th>
+            <th>Montant</th>
+            <th>Date paiement</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of items">
+            <td><strong>{{ l.idboutique }}</strong></td>
+            <td>{{ l.mois }}/{{ l.annee }}</td>
+            <td style="font-weight:600;color:var(--cc-accent)">{{ l.montant | number:'1.0-0' }} Ar</td>
+            <td style="font-size:.82rem">{{ l.datePaiement | date:'dd/MM/yyyy' }}</td>
+            <td><span class="cc-badge cc-badge-success">PAYÉ</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Vue normale (boutiques) : Toutes / Ouvertes / Fermées / Non payées -->
+    <div *ngIf="items.length > 0 && filterMode !== 'paye'" class="cc-table-wrap">
+      <div *ngIf="filterMode === 'nonpaye'" class="cc-info-banner cc-info-banner-warn">
+        ⚠️ {{ items.length }} boutique(s) n'ont pas encore payé leur loyer ce mois
+      </div>
+      <table class="cc-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Libellé</th>
+            <th>Catégorie</th>
+            <th>Horaires</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of items">
+            <td><code style="font-size:.75rem;color:var(--cc-accent)">{{ b.idboutique }}</code></td>
+            <td><strong>{{ b.libelle }}</strong></td>
+            <td><span class="cc-badge cc-badge-info">{{ b.categorie || '—' }}</span></td>
+            <td style="font-size:.82rem">{{ b.ouverture }} – {{ b.fermeture }}</td>
+            <td>
+              <span *ngIf="filterMode !== 'nonpaye'" class="cc-badge"
+                    [class.cc-badge-success]="isOpenNow(b)"
+                    [class.cc-badge-danger]="!isOpenNow(b)">
+                {{ isOpenNow(b) ? 'Ouvert' : 'Fermé' }}
+              </span>
+              <span *ngIf="filterMode === 'nonpaye'" class="cc-badge cc-badge-danger">IMPAYÉ</span>
+            </td>
+            <td>
+              <div class="cc-actions">
+                <button class="cc-btn-icon" (click)="openEdit(b)" title="Modifier">✏️</button>
+                <button class="cc-btn-icon danger" (click)="delete(b)" title="Supprimer">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>
+
+<!-- MODAL création/édition -->
+<div class="cc-overlay" *ngIf="showModal" (click)="close()">
+  <div class="cc-modal" (click)="$event.stopPropagation()">
+    <div class="cc-modal-hd">
+      <h3 class="cc-modal-title">{{ isEdit ? 'Modifier la boutique' : 'Nouvelle boutique' }}</h3>
+      <button class="cc-modal-close" (click)="close()">×</button>
+    </div>
+
+    <div *ngIf="formError" class="cc-error">{{ formError }}</div>
+
+    <div class="cc-fg">
+      <label class="cc-label">Libellé *</label>
+      <input class="cc-input" [(ngModel)]="form.libelle" placeholder="Nom de la boutique">
+    </div>
+    <div class="cc-fg">
+      <label class="cc-label">Description</label>
+      <textarea class="cc-input cc-textarea" [(ngModel)]="form.description" placeholder="Description"></textarea>
+    </div>
+    <div class="cc-fg-row">
+      <div class="cc-fg">
+        <label class="cc-label">URL</label>
+        <input class="cc-input" [(ngModel)]="form.url" placeholder="https://...">
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">Catégorie</label>
+        <input class="cc-input" [(ngModel)]="form.categorie" placeholder="Ex: Mode">
+      </div>
+    </div>
+    <div class="cc-fg-row">
+      <div class="cc-fg">
+        <label class="cc-label">ID Catégorie</label>
+        <input class="cc-input" type="number" [(ngModel)]="form.idCategorie" placeholder="1">
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">Ouverture</label>
+        <input class="cc-input" type="time" [(ngModel)]="form.ouverture">
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">Fermeture</label>
+        <input class="cc-input" type="time" [(ngModel)]="form.fermeture">
+      </div>
+    </div>
+    <div class="cc-fg-row">
+      <div class="cc-fg">
+        <label class="cc-label">Date début</label>
+        <input class="cc-input" type="date" [(ngModel)]="form.dateDebut">
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">Date fin</label>
+        <input class="cc-input" type="date" [(ngModel)]="form.dateFin">
+      </div>
+    </div>
+
+    <div class="cc-modal-ft">
+      <button class="cc-btn-ghost" (click)="close()">Annuler</button>
+      <button class="cc-btn-primary" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Enregistrement...' : (isEdit ? 'Modifier' : 'Créer') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.cc-btn-filter {
+  padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(251,226,72,.3);
+  background: transparent; color: var(--cc-muted); font-size: .82rem; font-weight: 500;
+  cursor: pointer; transition: all .18s;
+}
+.cc-btn-filter:hover { background: rgba(251,226,72,.08); color: var(--cc-text); }
+.cc-btn-filter.active { background: rgba(251,226,72,.18); color: #FBE248; border-color: #FBE248; font-weight: 600; }
+.cc-btn-filter.success.active { background: rgba(67,160,71,.2); color: #43a047; border-color: #43a047; }
+.cc-btn-filter.danger.active  { background: rgba(229,57,53,.2); color: #e53935; border-color: #e53935; }
+.cc-info-banner {
+  padding: 10px 16px; border-radius: 8px; font-size: .84rem; font-weight: 500;
+  background: rgba(67,160,71,.12); color: #43a047; margin-bottom: 12px;
+  border: 1px solid rgba(67,160,71,.3);
+}
+.cc-info-banner-warn {
+  background: rgba(229,57,53,.1); color: #e53935; border-color: rgba(229,57,53,.3);
+}
+</style>

@@ -1,6 +1,11 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { AdminComponent } from './admin/admin.component';
+import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.component';
+import { AdminBoutiquesComponent } from './admin/boutiques/admin-boutiques.component';
+import { AdminEvenementsComponent } from './admin/evenements/admin-evenements.component';
+import { AdminBoxesComponent } from './admin/boxes/admin-boxes.component';
+import { AdminParkingComponent } from './admin/parking/admin-parking.component';
 import { BoutiqueComponent } from './boutique/boutique.component';
 import { DashboardComponent } from './boutique/dashboard/dashboard.component';
 import { ProduitsComponent } from './boutique/produits/produits.component';
@@ -27,9 +32,24 @@ import { PlanComponent } from './client/plan/plan.component';
 import { clientAuthGuard } from './guards/client-auth.guard';
 
 export const routes: Routes = [
-  // ── Routes admin/boutique (inchangées) ─────────────────
+  // ── Login partagé boutique + admin ─────────────────────
   { path: 'login', component: LoginComponent },
-  { path: 'admin', component: AdminComponent },
+
+  // ── Section admin ───────────────────────────────────────
+  {
+    path: 'admin',
+    component: AdminComponent,
+    children: [
+      { path: '',           redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard',  component: AdminDashboardComponent  },
+      { path: 'boutiques',  component: AdminBoutiquesComponent  },
+      { path: 'evenements', component: AdminEvenementsComponent },
+      { path: 'boxes',      component: AdminBoxesComponent      },
+      { path: 'parking',    component: AdminParkingComponent    },
+    ]
+  },
+
+  // ── Section boutique ────────────────────────────────────
   {
     path: 'boutique',
     component: BoutiqueComponent,
@@ -63,7 +83,7 @@ export const routes: Routes = [
         children: [
           { path: 'login',      component: LoginClientComponent,      title: 'Connexion — Centre Commercial' },
           { path: 'register',   component: RegisterComponent,         title: 'Inscription — Centre Commercial' },
-          { path: 'profil',     component: ProfilClientComponent,     title: 'Mon profil — Centre Commercial',   canActivate: [clientAuthGuard] },
+          { path: 'profil',     component: ProfilClientComponent,     title: 'Mon profil — Centre Commercial',    canActivate: [clientAuthGuard] },
           { path: 'commandes',  component: CommandesClientComponent,  title: 'Mes commandes — Centre Commercial', canActivate: [clientAuthGuard] },
         ]
       }
