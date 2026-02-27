@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ClientApiService } from '../../services/client-api.service';
 import { ClientAuthService } from '../../services/client-auth.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-commandes-client',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AppIconComponent],
   templateUrl: './commandes.component.html',
   styleUrls: ['./commandes.component.css']
 })

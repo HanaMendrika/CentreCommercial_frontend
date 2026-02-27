@@ -28,7 +28,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
         <h2 style="font-size:1.2rem;font-weight:700">Informations personnelles</h2>
         @if (!editing) {
-          <button class="cl-btn cl-btn-outline cl-btn-sm" (click)="editing=true">✏️ Modifier</button>
+          <button class="cl-btn cl-btn-outline cl-btn-sm" (click)="editing=true" style="display:inline-flex;align-items:center;gap:.35rem"><app-icon name="file-text" [size]="14" /> Modifier</button>
         }
       </div>
 

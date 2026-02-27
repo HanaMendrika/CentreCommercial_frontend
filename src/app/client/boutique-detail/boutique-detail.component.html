@@ -22,7 +22,7 @@
       <span>{{ boutique.libelle || boutique.nom }}</span>
     </div>
     <div style="display:flex;align-items:center;gap:1.5rem;margin-top:.5rem;flex-wrap:wrap">
-      <span style="font-size:3rem">{{ emoji(boutique.categorie) }}</span>
+      <app-icon [cat]="boutique.categorie" [size]="48" />
       <div>
         <h1>{{ boutique.libelle || boutique.nom }}</h1>
         <p>{{ boutique.categorie }}{{ boutique.description ? ' · ' + boutique.description : '' }}</p>
@@ -52,13 +52,13 @@
             }
           </div>
           @if (produitsFiltres.length === 0) {
-            <div class="cl-empty"><div class="cl-empty-icon">📦</div><h3>Aucun produit disponible</h3></div>
+            <div class="cl-empty"><div class="cl-empty-icon"><app-icon name="package" [size]="38" /></div><h3>Aucun produit disponible</h3></div>
           } @else {
             <div class="cl-grid">
               @for (p of produitsFiltres; track p._id) {
                 <div class="cl-card cl-card-hover" (click)="openCommande(p)">
                   <div class="cl-product-img">
-                    🛍️
+                    <app-icon name="shopping-bag" [size]="48" />
                     @if (p.promotion) { <div style="position:absolute;top:8px;right:8px;background:#e53935;color:#fff;font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:20px">-{{ p.promotion }}%</div> }
                   </div>
                   <div class="cl-card-body">
@@ -119,7 +119,7 @@
           @if (loadingAvis) {
             <div class="cl-loading"><div class="cl-spinner"></div></div>
           } @else if (avis.length === 0) {
-            <div class="cl-empty"><div class="cl-empty-icon">💬</div><h3>Aucun avis pour le moment</h3><p>Soyez le premier !</p></div>
+            <div class="cl-empty"><div class="cl-empty-icon"><app-icon name="message-circle" [size]="38" /></div><h3>Aucun avis pour le moment</h3><p>Soyez le premier !</p></div>
           } @else {
             @for (a of avis; track $index) {
               <div class="cl-card" style="padding:1.1rem;margin-bottom:.75rem">
@@ -152,13 +152,13 @@
             <h3 style="margin-bottom:1rem">Informations</h3>
             <div style="display:grid;gap:.9rem">
               @if (boutique.categorie) {
-                <div style="display:flex;gap:.75rem"><span>🏷️</span><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Catégorie</div><div>{{ boutique.categorie }}</div></div></div>
+                <div style="display:flex;gap:.75rem"><app-icon name="tag" [size]="18" color="#b0a89e" /><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Catégorie</div><div>{{ boutique.categorie }}</div></div></div>
               }
               @if (boutique.description) {
-                <div style="display:flex;gap:.75rem"><span>📝</span><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Description</div><div>{{ boutique.description }}</div></div></div>
+                <div style="display:flex;gap:.75rem"><app-icon name="file-text" [size]="18" color="#b0a89e" /><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Description</div><div>{{ boutique.description }}</div></div></div>
               }
               @if (boutique.url) {
-                <div style="display:flex;gap:.75rem"><span>🌐</span><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Site web</div><a [href]="boutique.url" target="_blank" style="color:#FBE248">{{ boutique.url }}</a></div></div>
+                <div style="display:flex;gap:.75rem"><app-icon name="globe" [size]="18" color="#b0a89e" /><div><div style="font-size:.75rem;color:#b0a89e;text-transform:uppercase;font-weight:700">Site web</div><a [href]="boutique.url" target="_blank" style="color:#FBE248">{{ boutique.url }}</a></div></div>
               }
             </div>
           </div>
@@ -188,7 +188,7 @@
             @for (p of promos; track p._id) {
               <div class="cl-promo-card" style="margin-bottom:.5rem">
                 <div><strong style="font-size:.88rem">{{ p.libelle }}</strong><p style="font-size:.78rem">{{ p.type }}</p></div>
-                <div style="font-size:1.3rem;font-weight:700;color:#372A21">{{ p.valeur ? '-'+p.valeur+'%' : '🎁' }}</div>
+                <div style="font-size:1.3rem;font-weight:700;color:#372A21">@if (p.valeur) { {{'-'+p.valeur+'%'}} } @else { <app-icon name="gift" [size]="22" /> }</div>
               </div>
             }
           </div>
@@ -209,7 +209,7 @@
       </div>
       <div class="cl-modal-body">
         <div style="background:#efefef;border-radius:var(--cl-radius-sm);padding:1rem;display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
-          <span style="font-size:2rem">🛍️</span>
+          <app-icon name="shopping-bag" [size]="32" />
           <div><strong>{{ selectedProd.libelle }}</strong><br><span style="color:#6b5c50">{{ selectedProd.prix | number:'1.0-0' }} Ar</span></div>
         </div>
         <div class="cl-form-group">

@@ -41,6 +41,15 @@ export class ClientApiService {
   getBoutiqueProduits(id: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/boutiques/${id}/produits`);
   }
+  getBoutiquesWithStatus(): Observable<any[]> {
+    return this.http.get<any[]>('/api/boutiques/plan');
+  }
+  getParking(): Observable<any[]> {
+    return this.http.get<any[]>('/api/parking');
+  }
+  getParkingStats(): Observable<any> {
+    return this.http.get<any>('/api/parking/stats');
+  }
 
   // ── Promotions ───────────────────────────────────────────
   getPromotions(params?: any): Observable<any[]> {

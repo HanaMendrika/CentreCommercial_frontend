@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import { ClientAuthService } from '../../services/client-auth.service';
 import { ClientApiService } from '../../services/client-api.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-client-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, AppIconComponent],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css']
 })
@@ -78,8 +79,4 @@ export class LayoutComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  categoryEmoji(cat: string): string {
-    const map: Record<string, string> = { 'Mode': '👗', 'Chaussures': '👟', 'Électronique': '📱', 'Beauté': '💄', 'Sport': '⚽', 'Bijoux': '💍', 'Livres': '📚', 'Restaurant': '🍽️', 'Café': '☕' };
-    return map[cat] || '🏪';
-  }
 }

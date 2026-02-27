@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClientApiService } from '../../services/client-api.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-boutiques',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, AppIconComponent],
   templateUrl: './boutiques.component.html',
   styleUrls: ['./boutiques.component.css']
 })
@@ -49,10 +50,6 @@ export class BoutiquesComponent implements OnInit {
   }
 
   isOpen(id: string): boolean { return this.openIds.has(id); }
-  emoji(cat: string): string {
-    const m: Record<string,string> = { 'Mode':'👗','Chaussures':'👟','Électronique':'📱','Beauté':'💄','Sport':'⚽','Bijoux':'💍','Livres':'📚','Restaurant':'🍽️','Café':'☕' };
-    return m[cat] || '🏪';
-  }
   bannerUrl(cat: string): string {
     const m: Record<string,string> = {
       'Mode':         'photo-1441984904996-e0b6ba687e04',

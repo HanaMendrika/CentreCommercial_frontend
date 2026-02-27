@@ -23,6 +23,7 @@ import { ProfilClientComponent } from './client/profil/profil.component';
 import { CommandesClientComponent } from './client/commandes/commandes.component';
 import { LoginClientComponent } from './client/login/login-client.component';
 import { RegisterComponent } from './client/register/register.component';
+import { PlanComponent } from './client/plan/plan.component';
 import { clientAuthGuard } from './guards/client-auth.guard';
 
 export const routes: Routes = [
@@ -56,6 +57,7 @@ export const routes: Routes = [
       { path: 'boutiques',     component: BoutiquesComponent,        title: 'Boutiques — Centre Commercial' },
       { path: 'boutiques/:id', component: BoutiqueDetailComponent,   title: 'Boutique — Centre Commercial' },
       { path: 'foodcourt',     component: FoodcourtComponent,        title: 'FoodCourt — Centre Commercial' },
+      { path: 'plan',          component: PlanComponent,             title: 'Plan — Centre Commercial' },
       {
         path: 'client',
         children: [

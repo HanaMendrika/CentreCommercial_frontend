@@ -4,11 +4,12 @@ import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClientApiService } from '../../services/client-api.service';
 import { ClientAuthService } from '../../services/client-auth.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-boutique-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, AppIconComponent],
   templateUrl: './boutique-detail.component.html',
   styleUrls: ['./boutique-detail.component.css']
 })
@@ -119,10 +120,6 @@ export class BoutiqueDetailComponent implements OnInit {
   }
 
   stars(note: number): boolean[] { return Array.from({ length: 5 }, (_, i) => i < note); }
-  emoji(cat: string): string {
-    const m: Record<string,string> = { 'Mode':'👗','Chaussures':'👟','Électronique':'📱','Beauté':'💄','Sport':'⚽','Bijoux':'💍','Livres':'📚','Restaurant':'🍽️','Café':'☕' };
-    return m[cat] || '🏪';
-  }
 
   get horairesArray(): any[] {
     const jours = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];

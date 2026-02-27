@@ -15,6 +15,7 @@
     <a routerLink="/agenda" routerLinkActive="active">Agenda</a>
     <a routerLink="/boutiques" routerLinkActive="active">Boutiques</a>
     <a routerLink="/foodcourt" routerLinkActive="active">FoodCourt</a>
+    <a routerLink="/plan" routerLinkActive="active">Plan</a>
     @if (auth.isLoggedIn()) {
       <a routerLink="/client/profil" routerLinkActive="active">Mon profil</a>
     }
@@ -41,7 +42,7 @@
             <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#b0a89e;font-weight:700;margin-bottom:.4rem">Boutiques</div>
             @for (b of searchResults.boutiques; track b.idboutique) {
               <div class="cl-search-result" (click)="goToBoutique(b.idboutique)">
-                <div class="cl-search-icon">{{ categoryEmoji(b.categorie) }}</div>
+                <div class="cl-search-icon"><app-icon [cat]="b.categorie" [size]="20" /></div>
                 <div>
                   <strong style="font-size:.88rem">{{ b.libelle || b.nom }}</strong>
                   <p style="font-size:.78rem;color:#6b5c50;margin:0">{{ b.categorie || 'Boutique' }}</p>
@@ -82,6 +83,7 @@
           <li><a routerLink="/boutiques">Boutiques</a></li>
           <li><a routerLink="/foodcourt">FoodCourt</a></li>
           <li><a routerLink="/agenda">Agenda</a></li>
+          <li><a routerLink="/plan">Plan du centre</a></li>
         </ul>
       </div>
       <div>

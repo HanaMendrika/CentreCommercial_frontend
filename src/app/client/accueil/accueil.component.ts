@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ClientApiService } from '../../services/client-api.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-accueil',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AppIconComponent],
   templateUrl: './accueil.component.html',
   styleUrls: ['./accueil.component.css']
 })
@@ -44,11 +45,6 @@ export class AccueilComponent implements OnInit, OnDestroy {
   carouselNext(): void { this.carouselIdx = this.carouselIdx >= this.carouselMax ? 0 : this.carouselIdx + 1; }
   carouselPrev(): void { this.carouselIdx = this.carouselIdx <= 0 ? this.carouselMax : this.carouselIdx - 1; }
   carouselGo(i: number): void { this.carouselIdx = i; this.startCarousel(); }
-
-  emoji(cat: string): string {
-    const m: Record<string,string> = { 'Mode':'👗','Chaussures':'👟','Électronique':'📱','Beauté':'💄','Sport':'⚽','Bijoux':'💍','Livres':'📚','Restaurant':'🍽️','Café':'☕' };
-    return m[cat] || '🏪';
-  }
 
   bannerUrl(cat: string): string {
     const m: Record<string,string> = {

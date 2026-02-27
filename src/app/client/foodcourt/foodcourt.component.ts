@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClientApiService } from '../../services/client-api.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-foodcourt',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, AppIconComponent],
   templateUrl: './foodcourt.component.html',
   styleUrls: ['./foodcourt.component.css']
 })
@@ -55,9 +56,4 @@ export class FoodcourtComponent implements OnInit {
   }
 
   closeDetail(): void { this.selected = null; }
-
-  emoji(cat: string): string {
-    const m: Record<string,string> = { 'Burger':'🍔','Pizza':'🍕','Sushi':'🍣','Café':'☕','Glaces':'🍦','Sandwichs':'🥖','Tacos':'🌮','Desserts':'🍰','Boulangerie':'🥐','Restaurant':'🍽️' };
-    return m[cat] || '🍽️';
-  }
 }

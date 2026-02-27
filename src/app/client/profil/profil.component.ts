@@ -4,11 +4,12 @@ import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClientApiService } from '../../services/client-api.service';
 import { ClientAuthService } from '../../services/client-auth.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-profil-client',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, AppIconComponent],
   templateUrl: './profil.component.html',
   styleUrls: ['./profil.component.css']
 })

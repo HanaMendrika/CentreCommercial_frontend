@@ -50,7 +50,7 @@
           <div style="margin-top:2rem">
             <h2 class="cl-section-title" style="margin-bottom:1.25rem">Promotions à venir</h2>
             @if (upcoming.length === 0) {
-              <div class="cl-empty"><div class="cl-empty-icon">🏷️</div><h3>Aucune promotion à venir</h3></div>
+              <div class="cl-empty"><div class="cl-empty-icon"><app-icon name="tag" [size]="38" /></div><h3>Aucune promotion à venir</h3></div>
             } @else {
               <div class="cl-grid">
                 @for (p of upcoming; track p._id) {
@@ -64,7 +64,7 @@
                         </p>
                       }
                     </div>
-                    <div class="cl-promo-value">{{ p.valeur ? '-' + p.valeur + '%' : '🎁' }}</div>
+                    <div class="cl-promo-value">@if (p.valeur) { {{'-' + p.valeur + '%'}} } @else { <app-icon name="gift" [size]="22" /> }</div>
                   </div>
                 }
               </div>
@@ -96,7 +96,7 @@
             <div class="cl-card-body">
               @if (!selected) {
                 <div class="cl-empty" style="padding:1.5rem">
-                  <div class="cl-empty-icon">📅</div>
+                  <div class="cl-empty-icon"><app-icon name="calendar" [size]="38" /></div>
                   <p>Choisissez une date pour voir les détails</p>
                 </div>
               } @else {
@@ -117,13 +117,13 @@
                         <strong style="font-size:.88rem">{{ p.libelle }}</strong>
                         <p style="font-size:.78rem">{{ p.boutique?.libelle }}</p>
                       </div>
-                      <div style="font-size:1.3rem;font-weight:700;color:#372A21">{{ p.valeur ? '-'+p.valeur+'%' : '🎁' }}</div>
+                      <div style="font-size:1.3rem;font-weight:700;color:#372A21">@if (p.valeur) { {{'-'+p.valeur+'%'}} } @else { <app-icon name="gift" [size]="22" /> }</div>
                     </div>
                   }
                 }
                 @if (selectedBoutiques.length === 0 && selectedPromos.length === 0) {
                   <div class="cl-empty" style="padding:1.5rem">
-                    <div class="cl-empty-icon">😴</div>
+                    <div class="cl-empty-icon"><app-icon name="moon" [size]="38" /></div>
                     <p>Pas d'événements ce jour</p>
                   </div>
                 }

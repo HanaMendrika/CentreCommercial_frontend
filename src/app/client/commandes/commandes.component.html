@@ -21,7 +21,7 @@
       <div class="cl-loading"><div class="cl-spinner"></div></div>
     } @else if (commandes.length === 0) {
       <div class="cl-empty">
-        <div class="cl-empty-icon">📦</div>
+        <div class="cl-empty-icon"><app-icon name="package" [size]="38" /></div>
         <h3>Aucune commande pour le moment</h3>
         <p style="margin-bottom:1.5rem">Parcourez nos boutiques et commandez !</p>
         <a routerLink="/boutiques" class="cl-btn cl-btn-primary">Voir les boutiques</a>
@@ -49,7 +49,7 @@
           }
 
           @if (c.adresseLivraison) {
-            <div style="font-size:.82rem;color:#6b5c50;margin-top:.5rem">📍 {{ c.adresseLivraison }}</div>
+            <div style="font-size:.82rem;color:#6b5c50;margin-top:.5rem;display:flex;align-items:center;gap:.3rem"><app-icon name="map-pin" [size]="14" /> {{ c.adresseLivraison }}</div>
           }
 
           @if (c.total || c.montantTotal) {

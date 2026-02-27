@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ClientApiService } from '../../services/client-api.service';
+import { AppIconComponent } from '../../shared/icon/icon.component';
 
 interface CalDay { date: Date; otherMonth: boolean; events: { label: string; type: 'promo' | 'open' }[]; }
 
 @Component({
   selector: 'app-agenda',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AppIconComponent],
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.css']
 })
