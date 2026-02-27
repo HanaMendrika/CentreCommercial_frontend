@@ -1,25 +1,30 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+
+const NAV = [
+  { label: 'Tableau de bord', icon: '/icons/dashboard.png',  path: 'dashboard'  },
+  { label: 'Boutiques',       icon: '/icons/produits.png',   path: 'boutiques'  },
+  { label: 'Événements',      icon: '/icons/promotion.png',  path: 'evenements' },
+  { label: 'Emplacements',    icon: '/icons/loyer.png',      path: 'boxes'      },
+  { label: 'Parking',         icon: '/icons/commandes.png',  path: 'parking'    },
+];
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  template: `
-    <div style="padding:40px; color:#fff; background:#1a1a2e; min-height:100vh;">
-      <h2>Dashboard Admin</h2>
-      <p>Bienvenue, {{ user?.matricule }}</p>
-      <button (click)="logout()" style="padding:8px 16px; background:#e94560; color:#fff; border:none; border-radius:8px; cursor:pointer;">
-        Déconnexion
-      </button>
-    </div>
-  `
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.css']
 })
 export class AdminComponent {
+  nav = NAV;
   user: any;
+  initiale = '';
 
   constructor(private authService: AuthService, private router: Router) {
     this.user = this.authService.getUser();
+    this.initiale = (this.user?.matricule?.[0] || 'A').toUpperCase();
   }
 
   logout(): void {

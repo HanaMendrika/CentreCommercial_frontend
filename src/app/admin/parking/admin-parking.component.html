@@ -1,0 +1,164 @@
+<div class="cc-page">
+  <div class="cc-page-header">
+    <div>
+      <h1 class="cc-page-title"><img src="/icons/commandes.png" alt=""> Gestion du parking</h1>
+      <p class="cc-page-sub">Suivez et gérez les réservations de places de parking</p>
+    </div>
+    <button class="cc-btn-primary" (click)="openAdd()">+ Nouvelle réservation</button>
+  </div>
+
+  <!-- Parkings disponibles (référence rapide) -->
+  <div *ngIf="parkings.length > 0" class="cc-card" style="margin-bottom:20px;padding:16px">
+    <h3 style="color:var(--cc-text);font-size:.9rem;font-weight:700;margin:0 0 12px">
+      🅿️ Parkings du centre
+    </h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div *ngFor="let p of parkings" class="parking-chip">
+        <strong>{{ p.libelle }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="cc-stats" style="margin-bottom:20px">
+    <div class="cc-stat">
+      <div class="cc-stat-label">Total réservations</div>
+      <div class="cc-stat-value">{{ items.length }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Confirmées</div>
+      <div class="cc-stat-value accent">{{ countByStatus('CONFIRME') }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">En attente</div>
+      <div class="cc-stat-value">{{ countByStatus('EN_ATTENTE') }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Annulées</div>
+      <div class="cc-stat-value">{{ countByStatus('ANNULE') }}</div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="cc-card" style="margin-bottom:20px;padding:16px">
+    <div class="cc-fg-row" style="align-items:flex-end;gap:12px;margin:0">
+      <div class="cc-fg" style="flex:1">
+        <label class="cc-label">Parking</label>
+        <select class="cc-input" [(ngModel)]="filterParking">
+          <option value="">Tous les parkings</option>
+          <option *ngFor="let p of parkings" [value]="p.idParking">{{ p.libelle }}</option>
+        </select>
+      </div>
+      <div class="cc-fg" style="flex:1">
+        <label class="cc-label">Réservateur</label>
+        <select class="cc-input" [(ngModel)]="filterReservateur">
+          <option value="">Tous les clients</option>
+          <option *ngFor="let a of acheteurs" [value]="a.idAcheteur">{{ a.nom }}</option>
+        </select>
+      </div>
+      <button class="cc-btn-primary" (click)="load()">Filtrer</button>
+      <button class="cc-btn-ghost" (click)="resetFilters()">Réinitialiser</button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="cc-error">{{ error }}</div>
+  <div *ngIf="loading" class="cc-loading"><div class="loader"></div></div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="items.length === 0" class="cc-table-wrap">
+      <div class="cc-empty">
+        <div class="cc-empty-icon">🚗</div>
+        <p>Aucune réservation trouvée</p>
+      </div>
+    </div>
+
+    <div *ngIf="items.length > 0" class="cc-table-wrap">
+      <table class="cc-table">
+        <thead>
+          <tr>
+            <th>ID Réservation</th>
+            <th>Parking</th>
+            <th>Réservateur</th>
+            <th>Statut</th>
+            <th>Date création</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of items">
+            <td><code style="font-size:.75rem;color:var(--cc-accent)">{{ r.idReservationP }}</code></td>
+            <td>{{ parkingLibelle(r.idparking) }}</td>
+            <td>{{ acheteurNom(r.reservateur) }}</td>
+            <td>
+              <span class="cc-badge"
+                    [class.cc-badge-success]="r.idStatus==='CONFIRME'"
+                    [class.cc-badge-warning]="r.idStatus==='EN_ATTENTE'"
+                    [class.cc-badge-danger]="r.idStatus==='ANNULE'">
+                {{ r.idStatus === 'CONFIRME' ? 'Confirmé'
+                 : r.idStatus === 'EN_ATTENTE' ? 'En attente'
+                 : r.idStatus === 'ANNULE' ? 'Annulé' : r.idStatus }}
+              </span>
+            </td>
+            <td style="font-size:.82rem">{{ r.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <div class="cc-actions">
+                <button class="cc-btn-icon" (click)="openEdit(r)" title="Modifier">✏️</button>
+                <button class="cc-btn-icon danger" (click)="delete(r)" title="Supprimer">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>
+
+<!-- MODAL -->
+<div class="cc-overlay" *ngIf="showModal" (click)="close()">
+  <div class="cc-modal" (click)="$event.stopPropagation()">
+    <div class="cc-modal-hd">
+      <h3 class="cc-modal-title">{{ isEdit ? 'Modifier la réservation' : 'Nouvelle réservation' }}</h3>
+      <button class="cc-modal-close" (click)="close()">×</button>
+    </div>
+
+    <div *ngIf="formError" class="cc-error">{{ formError }}</div>
+
+    <div class="cc-fg">
+      <label class="cc-label">Parking *</label>
+      <select class="cc-input" [(ngModel)]="form.idparking">
+        <option value="">— Sélectionner un parking —</option>
+        <option *ngFor="let p of parkings" [value]="p.idParking">{{ p.libelle }}</option>
+      </select>
+    </div>
+    <div class="cc-fg">
+      <label class="cc-label">Réservateur *</label>
+      <select class="cc-input" [(ngModel)]="form.reservateur">
+        <option value="">— Sélectionner un client —</option>
+        <option *ngFor="let a of acheteurs" [value]="a.idAcheteur">{{ a.nom }}</option>
+      </select>
+    </div>
+    <div class="cc-fg">
+      <label class="cc-label">Statut</label>
+      <select class="cc-input" [(ngModel)]="form.idStatus">
+        <option value="CONFIRME">Confirmé</option>
+        <option value="EN_ATTENTE">En attente</option>
+        <option value="ANNULE">Annulé</option>
+      </select>
+    </div>
+
+    <div class="cc-modal-ft">
+      <button class="cc-btn-ghost" (click)="close()">Annuler</button>
+      <button class="cc-btn-primary" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Enregistrement...' : (isEdit ? 'Modifier' : 'Réserver') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.parking-chip {
+  padding: 6px 14px; border-radius: 20px; font-size: .8rem;
+  background: rgba(251,226,72,.08); border: 1px solid rgba(251,226,72,.2);
+  color: var(--cc-text);
+}
+</style>

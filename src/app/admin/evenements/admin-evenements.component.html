@@ -1,0 +1,128 @@
+<div class="cc-page">
+  <div class="cc-page-header">
+    <div>
+      <h1 class="cc-page-title"><img src="/icons/promotion.png" alt=""> Gestion des événements</h1>
+      <p class="cc-page-sub">Créez et gérez les événements du centre commercial</p>
+    </div>
+    <button class="cc-btn-primary" (click)="openAdd()">+ Nouvel événement</button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="cc-card" style="margin-bottom:20px;padding:16px">
+    <div class="cc-fg-row" style="align-items:flex-end;gap:12px;margin:0">
+      <div class="cc-fg" style="flex:1">
+        <label class="cc-label">Boutique</label>
+        <select class="cc-input" [(ngModel)]="filterBoutique">
+          <option value="">Toutes les boutiques</option>
+          <option *ngFor="let b of boutiques" [value]="b.idboutique">{{ b.libelle }}</option>
+        </select>
+      </div>
+      <div class="cc-fg" style="flex:0;white-space:nowrap;display:flex;align-items:center;gap:8px;padding-bottom:4px">
+        <input type="checkbox" id="filterActives" [(ngModel)]="filterActives" style="width:16px;height:16px;accent-color:#FBE248">
+        <label for="filterActives" style="color:var(--cc-text);font-size:.85rem;cursor:pointer">Événements actifs uniquement</label>
+      </div>
+      <button class="cc-btn-primary" (click)="load()">Filtrer</button>
+      <button class="cc-btn-ghost" (click)="filterBoutique='';filterActives=false;load()">Réinitialiser</button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="cc-error">{{ error }}</div>
+  <div *ngIf="loading" class="cc-loading"><div class="loader"></div></div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="items.length === 0" class="cc-table-wrap">
+      <div class="cc-empty">
+        <div class="cc-empty-icon">📅</div>
+        <p>Aucun événement trouvé</p>
+      </div>
+    </div>
+
+    <div *ngIf="items.length > 0" class="cc-table-wrap">
+      <table class="cc-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Libellé</th>
+            <th>Cible</th>
+            <th>Boutiques</th>
+            <th>Date début</th>
+            <th>Date fin</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ev of items">
+            <td><code style="font-size:.75rem;color:var(--cc-accent)">{{ ev.idevenement }}</code></td>
+            <td><strong>{{ ev.libelle }}</strong></td>
+            <td>{{ ev.cible }}</td>
+            <td>
+              <span *ngFor="let b of boutiquesOf(ev)" class="cc-badge cc-badge-info" style="margin:1px">{{ b }}</span>
+              <span *ngIf="boutiquesOf(ev).length === 0" style="color:var(--cc-muted);font-size:.78rem">—</span>
+            </td>
+            <td>{{ ev.dateDebut | date:'dd/MM/yyyy' }}</td>
+            <td>{{ ev.dateFin | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="cc-badge"
+                    [class.cc-badge-success]="isActive(ev)"
+                    [class.cc-badge-warning]="!isActive(ev)">
+                {{ isActive(ev) ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+            <td>
+              <div class="cc-actions">
+                <button class="cc-btn-icon" (click)="openEdit(ev)" title="Modifier">✏️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>
+
+<!-- MODAL -->
+<div class="cc-overlay" *ngIf="showModal" (click)="close()">
+  <div class="cc-modal" (click)="$event.stopPropagation()">
+    <div class="cc-modal-hd">
+      <h3 class="cc-modal-title">{{ isEdit ? 'Modifier l\'événement' : 'Nouvel événement' }}</h3>
+      <button class="cc-modal-close" (click)="close()">×</button>
+    </div>
+
+    <div *ngIf="formError" class="cc-error">{{ formError }}</div>
+
+    <div class="cc-fg">
+      <label class="cc-label">Libellé *</label>
+      <input class="cc-input" [(ngModel)]="form.libelle" placeholder="Nom de l'événement">
+    </div>
+    <div class="cc-fg">
+      <label class="cc-label">Cible *</label>
+      <input class="cc-input" [(ngModel)]="form.cible" placeholder="Ex: Tous les clients">
+    </div>
+    <div class="cc-fg-row">
+      <div class="cc-fg">
+        <label class="cc-label">Date début *</label>
+        <input class="cc-input" type="date" [(ngModel)]="form.dateDebut">
+      </div>
+      <div class="cc-fg">
+        <label class="cc-label">Date fin *</label>
+        <input class="cc-input" type="date" [(ngModel)]="form.dateFin">
+      </div>
+    </div>
+    <div class="cc-fg">
+      <label class="cc-label">ID Statut</label>
+      <select class="cc-input" [(ngModel)]="form.idStatus">
+        <option value="ACTIF">ACTIF</option>
+        <option value="INACTIF">INACTIF</option>
+        <option value="TERMINE">TERMINÉ</option>
+      </select>
+    </div>
+
+    <div class="cc-modal-ft">
+      <button class="cc-btn-ghost" (click)="close()">Annuler</button>
+      <button class="cc-btn-primary" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Enregistrement...' : (isEdit ? 'Modifier' : 'Créer') }}
+      </button>
+    </div>
+  </div>
+</div>
