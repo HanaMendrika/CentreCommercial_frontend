@@ -14,7 +14,7 @@
     </h3>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <div *ngFor="let p of parkings" class="parking-chip">
-        <strong>{{ p.idParking }}</strong> — {{ p.libelle }}
+        <strong>{{ p.libelle }}</strong>
       </div>
     </div>
   </div>
@@ -43,17 +43,18 @@
   <div class="cc-card" style="margin-bottom:20px;padding:16px">
     <div class="cc-fg-row" style="align-items:flex-end;gap:12px;margin:0">
       <div class="cc-fg" style="flex:1">
-        <label class="cc-label">ID Parking</label>
+        <label class="cc-label">Parking</label>
         <select class="cc-input" [(ngModel)]="filterParking">
           <option value="">Tous les parkings</option>
-          <option *ngFor="let p of parkings" [value]="p.idParking">
-            {{ p.idParking }} — {{ p.libelle }}
-          </option>
+          <option *ngFor="let p of parkings" [value]="p.idParking">{{ p.libelle }}</option>
         </select>
       </div>
       <div class="cc-fg" style="flex:1">
-        <label class="cc-label">Réservateur (ID Acheteur)</label>
-        <input class="cc-input" [(ngModel)]="filterReservateur" placeholder="Ex: ACH001">
+        <label class="cc-label">Réservateur</label>
+        <select class="cc-input" [(ngModel)]="filterReservateur">
+          <option value="">Tous les clients</option>
+          <option *ngFor="let a of acheteurs" [value]="a.idAcheteur">{{ a.nom }}</option>
+        </select>
       </div>
       <button class="cc-btn-primary" (click)="load()">Filtrer</button>
       <button class="cc-btn-ghost" (click)="resetFilters()">Réinitialiser</button>
@@ -86,11 +87,8 @@
         <tbody>
           <tr *ngFor="let r of items">
             <td><code style="font-size:.75rem;color:var(--cc-accent)">{{ r.idReservationP }}</code></td>
-            <td>
-              <div style="font-weight:600">{{ r.idparking }}</div>
-              <div style="font-size:.75rem;color:var(--cc-muted)">{{ parkingLibelle(r.idparking) }}</div>
-            </td>
-            <td>{{ r.reservateur }}</td>
+            <td>{{ parkingLibelle(r.idparking) }}</td>
+            <td>{{ acheteurNom(r.reservateur) }}</td>
             <td>
               <span class="cc-badge"
                     [class.cc-badge-success]="r.idStatus==='CONFIRME'"
@@ -129,14 +127,15 @@
       <label class="cc-label">Parking *</label>
       <select class="cc-input" [(ngModel)]="form.idparking">
         <option value="">— Sélectionner un parking —</option>
-        <option *ngFor="let p of parkings" [value]="p.idParking">
-          {{ p.idParking }} — {{ p.libelle }}
-        </option>
+        <option *ngFor="let p of parkings" [value]="p.idParking">{{ p.libelle }}</option>
       </select>
     </div>
     <div class="cc-fg">
-      <label class="cc-label">Réservateur (ID Acheteur) *</label>
-      <input class="cc-input" [(ngModel)]="form.reservateur" placeholder="Ex: ACH001">
+      <label class="cc-label">Réservateur *</label>
+      <select class="cc-input" [(ngModel)]="form.reservateur">
+        <option value="">— Sélectionner un client —</option>
+        <option *ngFor="let a of acheteurs" [value]="a.idAcheteur">{{ a.nom }}</option>
+      </select>
     </div>
     <div class="cc-fg">
       <label class="cc-label">Statut</label>

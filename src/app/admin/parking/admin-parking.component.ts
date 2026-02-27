@@ -12,7 +12,8 @@ import { AdminApiService } from '../../services/admin-api.service';
 })
 export class AdminParkingComponent implements OnInit {
   items: any[] = [];
-  parkings: any[] = [];       // liste des parkings (PARK001, PARK002, ...)
+  parkings: any[] = [];
+  acheteurs: any[] = [];
   loading = false;
   error = '';
 
@@ -29,12 +30,20 @@ export class AdminParkingComponent implements OnInit {
 
   ngOnInit() {
     this.loadParkings();
+    this.loadAcheteurs();
     this.load();
   }
 
   loadParkings() {
-    this.http.get<any[]>('/api/parking').subscribe({
+    this.http.get<any[]>('/api/admin/parking').subscribe({
       next: d => this.parkings = Array.isArray(d) ? d : [],
+      error: () => {}
+    });
+  }
+
+  loadAcheteurs() {
+    this.http.get<any[]>('/api/admin/dashboard/clients/all').subscribe({
+      next: d => this.acheteurs = Array.isArray(d) ? d : [],
       error: () => {}
     });
   }
@@ -43,8 +52,8 @@ export class AdminParkingComponent implements OnInit {
     this.loading = true;
     this.error = '';
     const params: any = {};
-    if (this.filterParking.trim()) params.idParking = this.filterParking.trim();
-    if (this.filterReservateur.trim()) params.reservateur = this.filterReservateur.trim();
+    if (this.filterParking) params.idParking = this.filterParking;
+    if (this.filterReservateur) params.reservateur = this.filterReservateur;
 
     this.api.getAllReservations(params).subscribe({
       next: d => { this.items = Array.isArray(d) ? d : []; this.loading = false; },
@@ -70,7 +79,7 @@ export class AdminParkingComponent implements OnInit {
 
   save() {
     if (!this.form.idparking || !this.form.reservateur) {
-      this.formError = 'ID Parking et réservateur sont requis.';
+      this.formError = 'Parking et réservateur sont requis.';
       return;
     }
     this.saving = true;
@@ -104,5 +113,9 @@ export class AdminParkingComponent implements OnInit {
 
   parkingLibelle(idParking: string): string {
     return this.parkings.find(p => p.idParking === idParking)?.libelle || idParking;
+  }
+
+  acheteurNom(idAcheteur: string): string {
+    return this.acheteurs.find(a => a.idAcheteur === idAcheteur)?.nom || idAcheteur;
   }
 }

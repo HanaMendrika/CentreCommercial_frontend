@@ -163,8 +163,39 @@ background-attachment: fixed;
   box-shadow: 0 0 0 2px rgba(251, 226, 72, 0.1);
 }
 .cc-input::placeholder, .cc-textarea::placeholder { color: rgba(251, 226, 72, 0.2); }
-.cc-select option { background: #2a1f19; color: var(--cc-text); }
 .cc-textarea { resize: vertical; min-height: 80px; }
+
+/* ===== SELECT CUSTOM ===== */
+select.cc-input {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FBE248' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px 16px;
+  padding-right: 42px;
+  cursor: pointer;
+  background-color: rgba(251, 226, 72, 0.06);
+}
+select.cc-input:hover:not(:focus) {
+  border-color: rgba(251, 226, 72, 0.35);
+  background-color: rgba(251, 226, 72, 0.09);
+}
+select.cc-input:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FBE248' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  box-shadow: 0 0 0 3px rgba(251, 226, 72, 0.12);
+}
+select.cc-input option {
+  background: #1c130e;
+  color: var(--cc-text);
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+select.cc-input option:checked {
+  background: #3a2a1a;
+  color: var(--cc-accent);
+  font-weight: 600;
+}
 
 /* ===== BADGES ===== */
 .cc-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; }
