@@ -1,1 +1,18 @@
 /* styles are in global styles.css */
+.brand-icon {
+    margin-top: 100px;
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  /* background: #FBE248; */
+}
+
+.brand-icon img {
+    margin-top: 10px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
