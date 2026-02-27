@@ -150,3 +150,56 @@
     }
   </div>
 </section>
+
+<!-- PRODUITS TENDANCE -->
+<section class="cl-section" style="background:var(--cl-dark)">
+  <div class="cl-container">
+    <div class="cl-section-header" style="margin-bottom:1.75rem">
+      <h2 class="cl-section-title" style="color:#fff">Produits du moment</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm" style="color:#d8c9be">Voir les boutiques →</a>
+    </div>
+
+    @if (loading.produits) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (produits.length === 0) {
+      <div class="cl-empty" style="color:#b0a89e"><div class="cl-empty-icon">🛍️</div><h3>Aucun produit disponible</h3></div>
+    } @else {
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.1rem">
+        @for (p of produits; track p._id) {
+          <div class="cl-produit-card"
+               routerLink="/boutiques/{{ p.idboutique }}">
+            <!-- Image -->
+            <div style="height:160px;overflow:hidden;position:relative">
+              <img [src]="produitImgUrl(p)" [alt]="p.libelle" class="cl-produit-img">
+              @if (p.prixOriginal && p.prixOriginal > p.prix) {
+                <span style="position:absolute;top:8px;left:8px;background:#FBE248;color:#372A21;font-size:.7rem;font-weight:800;padding:.2rem .55rem;border-radius:20px">
+                  -{{ ((1 - p.prix/p.prixOriginal)*100) | number:'1.0-0' }}%
+                </span>
+              }
+            </div>
+            <!-- Infos -->
+            <div style="padding:.9rem 1rem">
+              @if (p.categorie) {
+                <div style="font-size:.68rem;color:rgba(251,226,72,.6);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:.3rem">{{ p.categorie }}</div>
+              }
+              <div style="color:#fff;font-weight:700;font-size:.92rem;line-height:1.3;margin-bottom:.5rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ p.libelle }}</div>
+              <div style="display:flex;align-items:center;gap:.5rem">
+                @if (p.prix) {
+                  <span style="color:#FBE248;font-weight:800;font-size:1.05rem">{{ p.prix | number:'1.0-0' }} Ar</span>
+                }
+                @if (p.prixOriginal && p.prixOriginal > p.prix) {
+                  <span style="color:rgba(255,255,255,.35);font-size:.82rem;text-decoration:line-through">{{ p.prixOriginal | number:'1.0-0' }} Ar</span>
+                }
+              </div>
+              @if (p.stock !== undefined) {
+                <div style="margin-top:.4rem;font-size:.72rem;color:rgba(255,255,255,.4)">
+                  {{ p.stock > 0 ? 'En stock' : 'Rupture' }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

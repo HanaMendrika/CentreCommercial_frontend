@@ -35,6 +35,9 @@ export class ClientApiService {
   getFoodcourtBoutiqueById(id: string): Observable<any> {
     return this.http.get<any>(`/api/boutiques/foodcourt/${id}`);
   }
+  getAllProduits(limit = 12): Observable<any[]> {
+    return this.http.get<any[]>(`/api/produits?limit=${limit}`);
+  }
   getBoutiqueProduits(id: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/boutiques/${id}/produits`);
   }
