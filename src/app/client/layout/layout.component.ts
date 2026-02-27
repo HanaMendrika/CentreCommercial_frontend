@@ -26,6 +26,9 @@ export class LayoutComponent implements OnInit {
   toasts: { id: number; msg: string; type: string }[] = [];
   private toastId = 0;
 
+  // ── MENU HAMBURGER ──
+  menuOpen = false;
+
   constructor(
     public auth: ClientAuthService,
     private api: ClientApiService,
@@ -33,11 +36,16 @@ export class LayoutComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Ferme la dropdown à chaque navigation
+    // Ferme dropdown et hamburger à chaque navigation
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
       this.searchOpen = false;
       this.searchQuery = '';
+      this.menuOpen = false;
     });
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
   }
 
   get client() { return this.auth.getClient(); }
@@ -78,5 +86,4 @@ export class LayoutComponent implements OnInit {
     this.auth.clear();
     this.router.navigate(['/']);
   }
-
 }
