@@ -1,0 +1,62 @@
+<div class="auth-card">
+  <a routerLink="/" class="auth-logo">
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
+      <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".7"/>
+      <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".9"/>
+    </svg>
+    <span>Centre Commercial</span>
+  </a>
+
+  @if (success) {
+    <div style="text-align:center;padding:2rem 0">
+      <div style="margin-bottom:1rem;color:#4ade80;display:flex;justify-content:center"><app-icon name="check" [size]="48" color="#4ade80" /></div>
+      <h2 style="color:#fff;font-size:1.4rem;font-weight:700;margin-bottom:.5rem">Compte créé !</h2>
+      <p style="color:rgba(255,255,255,.5)">Redirection vers la connexion…</p>
+    </div>
+  } @else {
+    <h1 class="auth-title">Créer un compte</h1>
+    <p class="auth-sub">Inscrivez-vous pour profiter de toutes les fonctionnalités</p>
+
+    <div class="auth-row">
+      <div class="auth-fg">
+        <label class="auth-label">Nom complet *</label>
+        <input type="text" class="auth-input" [(ngModel)]="form.nom" placeholder="Jean Dupont">
+      </div>
+      <div class="auth-fg">
+        <label class="auth-label">Email *</label>
+        <input type="email" class="auth-input" [(ngModel)]="form.mail" placeholder="votre@email.com">
+      </div>
+    </div>
+
+    <div class="auth-row">
+      <div class="auth-fg">
+        <label class="auth-label">Mot de passe *</label>
+        <input type="password" class="auth-input" [(ngModel)]="form.mdp" placeholder="••••••••">
+      </div>
+      <div class="auth-fg">
+        <label class="auth-label">Confirmer *</label>
+        <input type="password" class="auth-input" [(ngModel)]="form.mdpConfirm" placeholder="••••••••">
+      </div>
+    </div>
+
+    <div class="auth-fg">
+      <label class="auth-label">Contact *</label>
+      <input type="text" class="auth-input" [(ngModel)]="form.contact" placeholder="+261 34 00 000 00">
+    </div>
+    <div class="auth-fg">
+      <label class="auth-label">Adresse *</label>
+      <input type="text" class="auth-input" [(ngModel)]="form.adresse" placeholder="Votre adresse complète">
+    </div>
+
+    @if (error) { <div class="auth-error">{{ error }}</div> }
+
+    <button class="auth-btn" [disabled]="loading" (click)="submit()">
+      {{ loading ? 'Création…' : 'Créer mon compte' }}
+    </button>
+
+    <p class="auth-footer">
+      Déjà un compte ? <a routerLink="/client/login">Se connecter</a>
+    </p>
+  }
+</div>

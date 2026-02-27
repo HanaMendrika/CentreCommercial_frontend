@@ -12,15 +12,29 @@ import { VentesComponent } from './boutique/ventes/ventes.component';
 import { EmployesComponent } from './boutique/employes/employes.component';
 import { CommandesComponent } from './boutique/commandes/commandes.component';
 
+// ── Section client ────────────────────────────────────────
+import { LayoutComponent } from './client/layout/layout.component';
+import { AccueilComponent } from './client/accueil/accueil.component';
+import { AgendaComponent } from './client/agenda/agenda.component';
+import { BoutiquesComponent } from './client/boutiques/boutiques.component';
+import { BoutiqueDetailComponent } from './client/boutique-detail/boutique-detail.component';
+import { FoodcourtComponent } from './client/foodcourt/foodcourt.component';
+import { ProfilClientComponent } from './client/profil/profil.component';
+import { CommandesClientComponent } from './client/commandes/commandes.component';
+import { LoginClientComponent } from './client/login/login-client.component';
+import { RegisterComponent } from './client/register/register.component';
+import { PlanComponent } from './client/plan/plan.component';
+import { clientAuthGuard } from './guards/client-auth.guard';
+
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // ── Routes admin/boutique (inchangées) ─────────────────
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminComponent },
   {
     path: 'boutique',
     component: BoutiqueComponent,
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '',            redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard',  component: DashboardComponent  },
       { path: 'produits',   component: ProduitsComponent   },
       { path: 'profil',     component: ProfilComponent     },
@@ -32,5 +46,29 @@ export const routes: Routes = [
       { path: 'commandes',  component: CommandesComponent  },
     ]
   },
-  { path: '**', redirectTo: 'login' }
+
+  // ── Site client public (avec navbar layout) ─────────────
+  {
+    path: '',
+    component: LayoutComponent,
+    children: [
+      { path: '',              component: AccueilComponent,          title: 'Accueil — Centre Commercial' },
+      { path: 'agenda',        component: AgendaComponent,           title: 'Agenda — Centre Commercial' },
+      { path: 'boutiques',     component: BoutiquesComponent,        title: 'Boutiques — Centre Commercial' },
+      { path: 'boutiques/:id', component: BoutiqueDetailComponent,   title: 'Boutique — Centre Commercial' },
+      { path: 'foodcourt',     component: FoodcourtComponent,        title: 'FoodCourt — Centre Commercial' },
+      { path: 'plan',          component: PlanComponent,             title: 'Plan — Centre Commercial' },
+      {
+        path: 'client',
+        children: [
+          { path: 'login',      component: LoginClientComponent,      title: 'Connexion — Centre Commercial' },
+          { path: 'register',   component: RegisterComponent,         title: 'Inscription — Centre Commercial' },
+          { path: 'profil',     component: ProfilClientComponent,     title: 'Mon profil — Centre Commercial',   canActivate: [clientAuthGuard] },
+          { path: 'commandes',  component: CommandesClientComponent,  title: 'Mes commandes — Centre Commercial', canActivate: [clientAuthGuard] },
+        ]
+      }
+    ]
+  },
+
+  { path: '**', redirectTo: '' }
 ];
