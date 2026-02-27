@@ -2,6 +2,9 @@
 <section class="cl-hero">
   <div class="cl-container">
     <div style="max-width:600px">
+      <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(251,226,72,.15);border:1px solid rgba(251,226,72,.3);border-radius:20px;padding:.3rem .9rem;margin-bottom:1.2rem">
+        <span style="color:#FBE248;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px">Shopping & Restauration</span>
+      </div>
       <h1>Bienvenue au<br><span>Centre Commercial</span></h1>
       <p>Découvrez nos boutiques, promotions exclusives et savourez l'expérience du shopping.</p>
       <div class="cl-hero-actions">
@@ -12,39 +15,64 @@
   </div>
 </section>
 
-<!-- PROMOTIONS -->
-<section class="cl-section cl-section-white">
+<!-- PROMOTIONS CAROUSEL -->
+<section class="cl-section" style="background:var(--cl-dark);padding-top:3rem;padding-bottom:3rem">
   <div class="cl-container">
-    <div class="cl-section-header">
-      <h2 class="cl-section-title">Promotions en cours</h2>
-      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm">Voir tout →</a>
+    <div class="cl-section-header" style="margin-bottom:1.5rem">
+      <h2 class="cl-section-title" style="color:#fff">Promotions en cours</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm" style="color:#d8c9be">Voir tout →</a>
     </div>
 
     @if (loading.promos) {
       <div class="cl-loading"><div class="cl-spinner"></div></div>
     } @else if (promos.length === 0) {
-      <div class="cl-empty"><div class="cl-empty-icon">🏷️</div><h3>Aucune promotion en cours</h3></div>
+      <div class="cl-empty" style="color:#b0a89e"><div class="cl-empty-icon">🏷️</div><h3>Aucune promotion en cours</h3></div>
     } @else {
-      <div class="cl-grid">
-        @for (p of promos; track p._id) {
-          <div class="cl-promo-card">
-            <div>
-              <h3 style="font-size:1rem;font-weight:700;color:#372A21">{{ p.libelle || 'Promotion' }}</h3>
-              <p style="font-size:.83rem;color:#4e3d30">{{ p.boutique?.libelle || 'Toutes boutiques' }}</p>
-              @if (p.dateFin) {
-                <p style="font-size:.75rem;margin-top:.25rem;color:#4e3d30">Jusqu'au {{ formatDate(p.dateFin) }}</p>
-              }
+      <!-- Carousel 4 items -->
+      <div style="overflow:hidden">
+        <div style="display:flex;transition:transform .4s cubic-bezier(.4,0,.2,1)"
+             [style.transform]="'translateX(calc(-' + carouselIdx + ' * 25%))'">
+          @for (p of promos; track p._id) {
+            <div style="flex:0 0 25%;max-width:25%;padding:0 8px;box-sizing:border-box">
+              <div style="background:rgba(251,226,72,.1);border:1px solid rgba(251,226,72,.2);border-radius:14px;padding:1.4rem 1.2rem;height:100%">
+                <div style="color:#FBE248;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.6rem">
+                  {{ p.typeReduction === 'montant' ? 'Réduction fixe' : 'Promotion' }}
+                </div>
+                <div style="font-size:2.2rem;font-weight:800;color:#FBE248;line-height:1;margin-bottom:.6rem">
+                  {{ p.typeReduction === 'montant' ? '-' + p.valeur + ' Ar' : '-' + p.valeur + '%' }}
+                </div>
+                <h3 style="color:#fff;font-size:.93rem;font-weight:700;margin-bottom:.5rem;line-height:1.3">{{ p.titre || p.libelle }}</h3>
+                @if (p.dateFin) {
+                  <span style="font-size:.75rem;color:rgba(251,226,72,.6)">📅 {{ formatDate(p.dateFin) }}</span>
+                }
+              </div>
             </div>
-            <div class="cl-promo-value">{{ p.valeur ? '-' + p.valeur + '%' : '🎉' }}</div>
-          </div>
-        }
+          }
+        </div>
       </div>
+
+      <!-- Contrôles -->
+      @if (carouselMax > 0) {
+        <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.2rem">
+          <button (click)="carouselPrev()" style="background:rgba(251,226,72,.12);border:1px solid rgba(251,226,72,.2);color:#FBE248;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center">‹</button>
+          <div style="display:flex;gap:.5rem">
+            @for (d of carouselDots; track d) {
+              <span (click)="carouselGo(d)"
+                    style="height:8px;border-radius:4px;cursor:pointer;transition:all .25s;display:block"
+                    [style.width]="d === carouselIdx ? '24px' : '8px'"
+                    [style.background]="d === carouselIdx ? '#FBE248' : 'rgba(251,226,72,.3)'">
+              </span>
+            }
+          </div>
+          <button (click)="carouselNext()" style="background:rgba(251,226,72,.12);border:1px solid rgba(251,226,72,.2);color:#FBE248;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center">›</button>
+        </div>
+      }
     }
   </div>
 </section>
 
 <!-- BOUTIQUES OUVERTES -->
-<section class="cl-section">
+<section class="cl-section cl-section-white">
   <div class="cl-container">
     <div class="cl-section-header">
       <h2 class="cl-section-title">Ouvertes maintenant</h2>
@@ -60,11 +88,11 @@
         @for (b of boutiquesOpen; track b.idboutique) {
           <a routerLink="/boutiques/{{ b.idboutique }}" style="text-decoration:none">
             <div class="cl-card cl-card-hover">
-              <div class="cl-boutique-banner">{{ emoji(b.categorie) }}
-                <div style="position:absolute;top:8px;right:8px"><span class="cl-badge cl-badge-open">Ouvert</span></div>
+              <div class="cl-boutique-banner" [style.background-image]="'url(' + bannerUrl(b.categorie) + ')'">
+                <div style="position:absolute;top:8px;right:8px;z-index:2"><span class="cl-badge cl-badge-open">Ouvert</span></div>
+                <span style="position:relative;z-index:2;padding:.5rem .75rem;color:#fff;font-weight:700;font-size:.95rem;text-shadow:0 1px 4px rgba(0,0,0,.6)">{{ b.libelle || b.nom }}</span>
               </div>
               <div class="cl-card-body">
-                <div class="cl-boutique-name">{{ b.libelle || b.nom }}</div>
                 <div class="cl-boutique-cat">{{ b.categorie || 'Divers' }}</div>
               </div>
             </div>
@@ -76,9 +104,9 @@
 </section>
 
 <!-- FOODCOURT TEASER -->
-<section class="cl-section cl-section-white">
+<section class="cl-section">
   <div class="cl-container">
-    <div style="background:#372A21;border-radius:20px;padding:3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
+    <div style="background:linear-gradient(135deg,rgba(55,42,33,.92) 0%,rgba(55,42,33,.8) 100%),url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=80') center/cover no-repeat;border-radius:20px;padding:3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
       <div>
         <div style="color:#FBE248;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem">Espace restauration</div>
         <h2 style="color:#fff;font-size:1.7rem;font-weight:700;margin-bottom:.7rem">Découvrez notre FoodCourt</h2>
@@ -90,7 +118,7 @@
 </section>
 
 <!-- TOUTES LES BOUTIQUES -->
-<section class="cl-section">
+<section class="cl-section cl-section-white">
   <div class="cl-container">
     <div class="cl-section-header">
       <h2 class="cl-section-title">Nos boutiques</h2>
@@ -106,12 +134,13 @@
         @for (b of boutiques; track b.idboutique) {
           <a routerLink="/boutiques/{{ b.idboutique }}" style="text-decoration:none">
             <div class="cl-card cl-card-hover">
-              <div class="cl-boutique-banner">{{ emoji(b.categorie) }}</div>
+              <div class="cl-boutique-banner" [style.background-image]="'url(' + bannerUrl(b.categorie) + ')'">
+                <span style="position:relative;z-index:2;padding:.5rem .75rem;color:#fff;font-weight:700;font-size:.95rem;text-shadow:0 1px 4px rgba(0,0,0,.6)">{{ b.libelle || b.nom }}</span>
+              </div>
               <div class="cl-card-body">
-                <div class="cl-boutique-name">{{ b.libelle || b.nom }}</div>
                 <div class="cl-boutique-cat">{{ b.categorie || 'Divers' }}</div>
-                <div class="cl-boutique-meta" style="margin-top:.5rem">
-                  <span>🕐 {{ b.horaires || 'Voir horaires' }}</span>
+                <div class="cl-boutique-meta" style="margin-top:.4rem">
+                  <span>🕐 {{ b.ouverture || '09:00' }} – {{ b.fermeture || '20:00' }}</span>
                 </div>
               </div>
             </div>

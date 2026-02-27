@@ -1,61 +1,35 @@
-<div class="cl-auth-wrap">
-  <!-- Panel gauche décoratif -->
-  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:3rem;display:none" class="auth-deco">
-    <div style="text-align:center">
-      <svg width="120" height="120" viewBox="0 0 40 40" fill="none">
-        <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
-        <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".6"/>
-        <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".85"/>
-      </svg>
-      <h2 style="color:#fff;font-size:1.8rem;font-weight:700;margin-top:1.5rem">Centre Commercial</h2>
-      <p style="color:#d8c9be;margin-top:.5rem;font-size:1rem">Shopping, Restauration & bien plus</p>
-    </div>
+<div class="auth-card">
+  <a routerLink="/" class="auth-logo">
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
+      <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".7"/>
+      <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".9"/>
+    </svg>
+    <span>Centre Commercial</span>
+  </a>
+
+  <h1 class="auth-title">Connexion</h1>
+  <p class="auth-sub">Accédez à votre espace client</p>
+
+  @if (error) { <div class="auth-error">{{ error }}</div> }
+
+  <div class="auth-fg">
+    <label class="auth-label">Adresse email</label>
+    <input type="email" class="auth-input" [(ngModel)]="mail" placeholder="votre@email.com" (keyup.enter)="submit()">
+  </div>
+  <div class="auth-fg">
+    <label class="auth-label">Mot de passe</label>
+    <input type="password" class="auth-input" [(ngModel)]="mdp" placeholder="••••••••" (keyup.enter)="submit()">
   </div>
 
-  <!-- Panel connexion -->
-  <div class="cl-auth-panel">
-    <a routerLink="/" class="cl-auth-logo">
-      <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
-        <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
-        <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".7"/>
-        <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".9"/>
-      </svg>
-      <span>Centre Commercial</span>
-    </a>
+  <button class="auth-btn" [disabled]="loading" (click)="submit()">
+    {{ loading ? 'Connexion…' : 'Se connecter' }}
+  </button>
 
-    <h1 class="cl-auth-title">Connexion</h1>
-    <p class="cl-auth-sub">Connectez-vous pour commander et accéder à votre profil</p>
+  <p class="auth-footer">
+    Pas encore de compte ? <a routerLink="/client/register">Créer un compte</a>
+  </p>
 
-    <div class="cl-form-group">
-      <label class="cl-label">Adresse email</label>
-      <input type="email" class="cl-input" [(ngModel)]="mail" placeholder="votre@email.com" (keyup.enter)="submit()">
-    </div>
-    <div class="cl-form-group">
-      <label class="cl-label">Mot de passe</label>
-      <input type="password" class="cl-input" [(ngModel)]="mdp" placeholder="••••••••" (keyup.enter)="submit()">
-    </div>
-
-    @if (error) { <p class="cl-error" style="margin-bottom:.75rem">{{ error }}</p> }
-
-    <button class="cl-btn cl-btn-primary cl-btn-block cl-btn-lg" [disabled]="loading" (click)="submit()">
-      {{ loading ? 'Connexion…' : 'Se connecter' }}
-    </button>
-
-    <p class="cl-auth-footer">
-      Pas encore de compte ? <a routerLink="/client/register">Créer un compte</a>
-    </p>
-
-    <div style="display:flex;align-items:center;gap:.75rem;margin-top:1.5rem;color:#b0a89e;font-size:.83rem">
-      <div style="flex:1;height:1px;background:#efefef"></div>
-      <span>Accès boutique</span>
-      <div style="flex:1;height:1px;background:#efefef"></div>
-    </div>
-    <a routerLink="/login" class="cl-btn cl-btn-ghost cl-btn-block" style="margin-top:.75rem;font-size:.88rem">
-      Connexion espace boutique / admin
-    </a>
-  </div>
+  <div class="auth-divider">Accès boutique</div>
+  <a routerLink="/login" class="auth-ghost">Connexion espace boutique / admin</a>
 </div>
-
-<style>
-@media (min-width: 900px) { .auth-deco { display: flex !important; } }
-</style>

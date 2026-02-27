@@ -53,4 +53,21 @@ export class BoutiquesComponent implements OnInit {
     const m: Record<string,string> = { 'Mode':'👗','Chaussures':'👟','Électronique':'📱','Beauté':'💄','Sport':'⚽','Bijoux':'💍','Livres':'📚','Restaurant':'🍽️','Café':'☕' };
     return m[cat] || '🏪';
   }
+  bannerUrl(cat: string): string {
+    const m: Record<string,string> = {
+      'Mode':         'photo-1441984904996-e0b6ba687e04',
+      'Chaussures':   'photo-1542291026-7eec264c27ff',
+      'Électronique': 'photo-1518770660439-4636190af475',
+      'Beauté':       'photo-1522335789203-aabd1fc54bc9',
+      'Sport':        'photo-1517649763962-0c623066013b',
+      'Bijoux':       'photo-1515562141207-7a88fb7ce338',
+      'Livres':       'photo-1507842217343-583bb7270b66',
+      'Restaurant':   'photo-1414235077428-338989a2e8c0',
+      'Café':         'photo-1501339847302-ac426a4a7cbb',
+      'Fast Food':    'photo-1561758033-d89a9ad46330',
+      'Restauration': 'photo-1555396273-367ea4eb4db5',
+    };
+    const id = m[cat] || 'photo-1567958451986-2de427a4a0be';
+    return `https://images.unsplash.com/${id}?w=400&q=70`;
+  }
 }
