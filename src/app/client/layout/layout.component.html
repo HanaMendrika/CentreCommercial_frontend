@@ -1,12 +1,13 @@
 <nav class="cl-navbar">
   <!-- Logo -->
   <a routerLink="/" class="cl-navbar-logo">
-    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+    <!-- <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
       <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
       <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".7"/>
       <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".9"/>
-    </svg>
-    <span>Centre<br>Commercial</span>
+    </svg> -->
+    <div class="brand-icon"><img src="/logo/logoTrans.png" alt="Logo"></div>
+    <!-- <span>Centre<br>Commercial</span> -->
   </a>
 
   <!-- Liens -->
@@ -20,6 +21,8 @@
       <a routerLink="/client/profil" routerLinkActive="active">Mon profil</a>
     }
   </div>
+
+  <div class="cl-navbar-hamburger" (click)="toggleMenu()">&#9776;</div>
 
   <!-- Recherche -->
   <div class="cl-search-wrap" style="position:relative">

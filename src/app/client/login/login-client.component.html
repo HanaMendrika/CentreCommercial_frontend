@@ -1,35 +1,52 @@
-<div class="auth-card">
-  <a routerLink="/" class="auth-logo">
-    <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
-      <rect x="4" y="18" width="28" height="18" rx="3" fill="#FBE248"/>
-      <rect x="8" y="12" width="28" height="18" rx="3" fill="#372A21" opacity=".7"/>
-      <rect x="12" y="6" width="28" height="18" rx="3" fill="#FBE248" opacity=".9"/>
-    </svg>
-    <span>Centre Commercial</span>
-  </a>
+<div class="auth-container">
 
-  <h1 class="auth-title">Connexion</h1>
-  <p class="auth-sub">Accédez à votre espace client</p>
+  <div class="auth-card">
 
-  @if (error) { <div class="auth-error">{{ error }}</div> }
+    <!-- PARTIE FORMULAIRE -->
+    <div class="auth-form">
+      <a routerLink="/" class="auth-logo">
+        <div><img class="brand-icon" src="/logo/logoTrans.png" alt="Logo"></div>
+        <span>Centre Commercial</span>
+      </a>
 
-  <div class="auth-fg">
-    <label class="auth-label">Adresse email</label>
-    <input type="email" class="auth-input" [(ngModel)]="mail" placeholder="votre@email.com" (keyup.enter)="submit()">
+      <h1 class="auth-title">Connexion</h1>
+      <p class="auth-sub">Accédez à votre espace client</p>
+
+      @if (error) { <div class="auth-error">{{ error }}</div> }
+
+      <div class="auth-fg">
+        <label class="auth-label">Adresse email</label>
+        <input type="email" class="auth-input" [(ngModel)]="mail">
+      </div>
+
+      <div class="auth-fg">
+        <label class="auth-label">Mot de passe</label>
+        <input type="password" class="auth-input" [(ngModel)]="mdp">
+      </div>
+
+<button 
+  class="auth-btn"
+  [disabled]="loading"
+  (click)="submit()">
+  {{ loading ? 'Connexion…' : 'Se connecter' }}
+</button>
+
+      <p class="auth-footer">
+        Pas encore de compte ?
+        <a routerLink="/client/register">Créer un compte</a>
+      </p>
+
+      <div class="auth-divider">Accès boutique</div>
+      <a routerLink="/login" class="auth-ghost">
+        Connexion espace boutique / admin
+      </a>
+    </div>
+
+    <!-- IMAGE -->
+    <div class="auth-image">
+      <img src="/img/ito.jpg" alt="Illustration boutique">
+    </div>
+
   </div>
-  <div class="auth-fg">
-    <label class="auth-label">Mot de passe</label>
-    <input type="password" class="auth-input" [(ngModel)]="mdp" placeholder="••••••••" (keyup.enter)="submit()">
-  </div>
 
-  <button class="auth-btn" [disabled]="loading" (click)="submit()">
-    {{ loading ? 'Connexion…' : 'Se connecter' }}
-  </button>
-
-  <p class="auth-footer">
-    Pas encore de compte ? <a routerLink="/client/register">Créer un compte</a>
-  </p>
-
-  <div class="auth-divider">Accès boutique</div>
-  <a routerLink="/login" class="auth-ghost">Connexion espace boutique / admin</a>
 </div>
