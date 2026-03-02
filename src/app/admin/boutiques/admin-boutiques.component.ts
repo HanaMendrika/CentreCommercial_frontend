@@ -22,6 +22,7 @@ export class AdminBoutiquesComponent implements OnInit {
   form: any = {};
   formError = '';
   saving = false;
+  categories: string[] = [];
 
   showLoyerModal = false;
   loyerData: any[] = [];
@@ -30,7 +31,19 @@ export class AdminBoutiquesComponent implements OnInit {
 
   constructor(private api: AdminApiService) {}
 
-  ngOnInit() { this.load(); }
+  ngOnInit() { 
+    this.load();
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    // Extraire les catégories uniques des boutiques existantes
+    const allCats = this.items
+      .map(b => b.categorie)
+      .filter((v, i, a) => v && a.indexOf(v) === i)
+      .sort();
+    this.categories = allCats;
+  }
 
   load() {
     this.loading = true;
@@ -42,7 +55,7 @@ export class AdminBoutiquesComponent implements OnInit {
       : this.api.getAllBoutiques();
 
     call.subscribe({
-      next: d => { this.items = Array.isArray(d) ? d : []; this.loading = false; },
+      next: d => { this.items = Array.isArray(d) ? d : []; this.loadCategories(); this.loading = false; },
       error: e => { this.error = e.error?.message || 'Erreur de chargement'; this.loading = false; }
     });
   }
@@ -53,7 +66,7 @@ export class AdminBoutiquesComponent implements OnInit {
   }
 
   openAdd() {
-    this.form = { ouverture: '09:00', fermeture: '18:00' };
+    this.form = { ouverture: '09:00', fermeture: '18:00', idCategorie: 1 };
     this.isEdit = false;
     this.formError = '';
     this.showModal = true;
@@ -70,11 +83,21 @@ export class AdminBoutiquesComponent implements OnInit {
 
   save() {
     if (!this.form.libelle) { this.formError = 'Le libellé est requis.'; return; }
+    if (!this.form.idCategorie) { this.formError = 'L\'ID catégorie est requis.'; return; }
     this.saving = true;
     this.formError = '';
+    
+    let payload = this.form;
+    if (!this.isEdit) {
+      // Retirer les champs système pour la création
+      payload = { ...this.form };
+      delete payload._id;
+      delete payload.idBoutique;
+    }
+    
     const obs = this.isEdit
       ? this.api.updateBoutique(this.form._id, this.form)
-      : this.api.createBoutique(this.form);
+      : this.api.createBoutique(payload);
     obs.subscribe({
       next: () => { this.saving = false; this.close(); this.load(); },
       error: e => { this.formError = e.error?.error || e.error?.message || 'Erreur'; this.saving = false; }
