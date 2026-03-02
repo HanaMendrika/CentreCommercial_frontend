@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BoutiqueService {
-  private apiUrl = '/api/boutique'; // Le proxy redirigera vers localhost:5000
+  private apiUrl = '/api/boutiques'; // Le proxy redirigera vers localhost:5000
 
   constructor(private http: HttpClient) { }
 

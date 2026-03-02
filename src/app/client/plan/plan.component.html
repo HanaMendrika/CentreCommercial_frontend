@@ -1,0 +1,272 @@
+<div class="plan-page">
+
+  <!-- ── Header ── -->
+  <div class="cl-page-header">
+    <div class="cl-container">
+      <h1 class="cl-page-title">Plan du Centre Commercial</h1>
+      <p class="cl-page-subtitle">Localisation des boutiques · Parking en temps réel</p>
+    </div>
+  </div>
+
+  <div class="cl-container plan-body">
+
+    <!-- ── Tabs ── -->
+    <div class="plan-tabs">
+      <button class="plan-tab" [class.active]="tab === 'plan'" (click)="switchTab('plan')">
+        <app-icon name="map-pin" [size]="18" /> Plan des boutiques
+      </button>
+      <button class="plan-tab" [class.active]="tab === 'parking'" (click)="switchTab('parking')">
+        <app-icon name="square-parking" [size]="18" /> Parking
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- TAB : PLAN DES BOUTIQUES                              -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    @if (tab === 'plan') {
+
+      @if (loading.boutiques) {
+        <div class="plan-loading">
+          <div class="spinner"></div>
+          <span>Chargement du plan…</span>
+        </div>
+      } @else {
+
+        <!-- Légende -->
+        <div class="plan-legend">
+          <span class="legend-item"><span class="legend-dot open"></span>Ouvert</span>
+          <span class="legend-item"><span class="legend-dot closed"></span>Fermé</span>
+          <span class="legend-hint">Cliquez sur une boutique pour la visiter</span>
+        </div>
+
+        <!-- Carte de la galerie marchande -->
+        <div class="mall-map-wrapper">
+          <!-- Entrée -->
+          <div class="mall-label mall-label--top">
+            <span>↑ ENTRÉE PRINCIPALE</span>
+          </div>
+
+          <!-- Grille du mall (5 colonnes × 3 lignes) -->
+          <div class="mall-grid">
+
+            <!-- Boutiques positionnées explicitement -->
+            @for (item of layout; track item.idboutique) {
+              @if (getBoutique(item.idboutique); as b) {
+                <a class="map-shop"
+                   [class.map-shop--open]="b.isOpen"
+                   [class.map-shop--closed]="!b.isOpen"
+                   [style.grid-column]="item.col"
+                   [style.grid-row]="item.row"
+                   [routerLink]="'/boutiques/' + b.idboutique"
+                   [title]="b.libelle">
+                  <div class="shop-cat-bar" [style.background]="catColor(b.categorie)"></div>
+                  <div class="shop-emoji"><app-icon [cat]="b.categorie" [size]="28" /></div>
+                  <div class="shop-name">{{ b.libelle | titlecase }}</div>
+                  <div class="shop-cat">{{ b.categorie }}</div>
+                  <div class="shop-status" [class.open]="b.isOpen">
+                    <span class="status-dot"></span>
+                    {{ b.isOpen ? 'Ouvert' : 'Fermé' }}
+                  </div>
+                  <div class="shop-hours">{{ b.ouverture }}–{{ b.fermeture || '?' }}</div>
+                </a>
+              }
+            }
+
+            <!-- Couloir vertical (colonne 3, lignes 1 et 3) -->
+            <div class="map-vcorr" style="grid-column:3;grid-row:1">
+              <div class="vcorr-arrow">↕</div>
+            </div>
+            <div class="map-vcorr" style="grid-column:3;grid-row:3">
+              <div class="vcorr-arrow">↕</div>
+            </div>
+
+            <!-- Couloir horizontal (ligne 2, toutes colonnes) -->
+            <div class="map-hcorr" style="grid-column:1/-1;grid-row:2">
+              <div class="hcorr-info">
+                <div class="info-circle">ℹ</div>
+                <span>ALLÉE CENTRALE</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Sortie -->
+          <div class="mall-label mall-label--bottom">
+            <span>PARKING · SORTIE ↓</span>
+          </div>
+        </div>
+
+        <!-- Récap boutiques ouvertes -->
+        <div class="open-summary">
+          <span class="open-count">
+            {{ countOpen() }} boutique(s) ouvertes en ce moment
+          </span>
+        </div>
+
+      }
+    }
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- TAB : PARKING                                         -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    @if (tab === 'parking') {
+
+      @if (loading.parking) {
+        <div class="plan-loading">
+          <div class="spinner"></div>
+          <span>Chargement du parking…</span>
+        </div>
+      } @else {
+
+        <!-- Stats -->
+        <div class="parking-stats-bar">
+          <div class="pstat pstat--green">
+            <div class="pstat-num">{{ parkingStats.dispo }}</div>
+            <div class="pstat-label">Disponibles</div>
+          </div>
+          <div class="pstat pstat--red">
+            <div class="pstat-num">{{ parkingStats.occupe }}</div>
+            <div class="pstat-label">Occupées</div>
+          </div>
+          <div class="pstat pstat--neutral">
+            <div class="pstat-num">{{ parkingStats.total }}</div>
+            <div class="pstat-label">Total</div>
+          </div>
+          <!-- Barre de dispo -->
+          <div class="pstat-bar-wrap">
+            <div class="pstat-bar-label">Taux de disponibilité</div>
+            <div class="pstat-bar">
+              <div class="pstat-bar-fill" [style.width]="pct + '%'"></div>
+            </div>
+            <div class="pstat-bar-pct">{{ pct }}%</div>
+          </div>
+        </div>
+
+        <!-- Légende parking -->
+        <div class="parking-legend">
+          <span class="plg"><span class="ps-demo available"></span>Libre</span>
+          <span class="plg"><span class="ps-demo taken"></span>Occupée</span>
+          <span class="plg"><span class="ps-demo vip"></span>VIP</span>
+          <span class="plg"><span class="ps-demo pmr"></span>PMR ♿</span>
+        </div>
+
+        <!-- Plan du parking : vue de dessus -->
+        <div class="parking-lot">
+
+          <!-- Entrée / sortie -->
+          <div class="lot-gate lot-gate--entry">
+            <div class="gate-bar"></div>
+            <span class="gate-label">ENTRÉE</span>
+          </div>
+
+          <!-- Secteurs A et B : deux rangées face à face avec allée centrale -->
+          @for (secteur of secteurs; track secteur.label) {
+            @if (secteur.type === 'normal') {
+              <div class="lot-zone">
+                <div class="lot-zone-label">
+                  <span>Secteur {{ secteur.label }}</span>
+                  <span class="zone-dispo"
+                        [class.dispo-ok]="countAvailable(secteur.spots) > 0"
+                        [class.dispo-full]="countAvailable(secteur.spots) === 0">
+                    {{ countAvailable(secteur.spots) }}/{{ secteur.spots.length }} libres
+                  </span>
+                </div>
+
+                <!-- Rangée haut (nez vers le bas → allée) -->
+                <div class="bay-row bay-row--top">
+                  @for (spot of topRow(secteur.spots); track spot.numero) {
+                    <div class="bay"
+                         [class.bay--free]="spot.disponible"
+                         [class.bay--occ]="!spot.disponible"
+                         [title]="spot.numero">
+                      <span class="bay-num">{{ spot.numero }}</span>
+                      @if (spot.disponible) {
+                        <span class="bay-icon bay-p">P</span>
+                      } @else {
+                        <span class="bay-icon"><app-icon name="car" [size]="16" /></span>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- Allée de circulation -->
+                <div class="aisle">
+                  <span class="aisle-arrow">→</span>
+                  <span class="aisle-text">ALLÉE DE CIRCULATION</span>
+                  <span class="aisle-arrow">→</span>
+                </div>
+
+                <!-- Rangée bas (nez vers le haut → allée) -->
+                <div class="bay-row bay-row--bottom">
+                  @for (spot of bottomRow(secteur.spots); track spot.numero) {
+                    <div class="bay"
+                         [class.bay--free]="spot.disponible"
+                         [class.bay--occ]="!spot.disponible"
+                         [title]="spot.numero">
+                      <span class="bay-num">{{ spot.numero }}</span>
+                      @if (spot.disponible) {
+                        <span class="bay-icon bay-p">P</span>
+                      } @else {
+                        <span class="bay-icon"><app-icon name="car" [size]="16" /></span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          }
+
+          <!-- Séparateur avant zones spéciales -->
+          <div class="lot-divider"></div>
+
+          <!-- Zones spéciales : VIP + PMR côte à côte -->
+          <div class="lot-special">
+            @for (secteur of secteurs; track secteur.label) {
+              @if (secteur.type !== 'normal') {
+                <div class="special-zone"
+                     [class.zone-vip]="secteur.type === 'VIP'"
+                     [class.zone-pmr]="secteur.type === 'PMR'">
+                  <div class="special-zone-title">
+                    @if (secteur.type === 'VIP') { <span style="display:inline-flex;align-items:center;gap:.3rem"><app-icon name="star" [size]="14" /> VIP</span> }
+                    @if (secteur.type === 'PMR') { <span>♿ PMR</span> }
+                    <span class="zone-dispo"
+                          [class.dispo-ok]="countAvailable(secteur.spots) > 0"
+                          [class.dispo-full]="countAvailable(secteur.spots) === 0">
+                      {{ countAvailable(secteur.spots) }}/{{ secteur.spots.length }}
+                    </span>
+                  </div>
+                  <div class="special-bays">
+                    @for (spot of secteur.spots; track spot.numero) {
+                      <div class="bay bay--special"
+                           [class.bay--free]="spot.disponible"
+                           [class.bay--occ]="!spot.disponible"
+                           [class.bay--vip]="secteur.type === 'VIP'"
+                           [class.bay--pmr]="secteur.type === 'PMR'"
+                           [title]="spot.numero">
+                        <span class="bay-num">{{ spot.numero }}</span>
+                        @if (spot.disponible) {
+                          <span class="bay-icon bay-p">P</span>
+                        } @else {
+                          <span class="bay-icon"><app-icon name="car" [size]="16" /></span>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            }
+          </div>
+
+          <!-- Sortie -->
+          <div class="lot-gate lot-gate--exit">
+            <span class="gate-label">SORTIE</span>
+            <div class="gate-bar"></div>
+          </div>
+
+        </div>
+
+      }
+    }
+
+  </div>
+</div>

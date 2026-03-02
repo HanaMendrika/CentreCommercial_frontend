@@ -1,0 +1,67 @@
+<div class="cl-page-header">
+  <div class="cl-container">
+    <div class="cl-breadcrumb"><a routerLink="/">Accueil</a><span>/</span><span>Boutiques</span></div>
+    <h1>Nos Boutiques</h1>
+    <p>{{ filtered.length }} boutique{{ filtered.length !== 1 ? 's' : '' }} disponible{{ filtered.length !== 1 ? 's' : '' }}</p>
+  </div>
+</div>
+
+<section class="cl-section">
+  <div class="cl-container">
+    <!-- Recherche + filtres -->
+    <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px;position:relative">
+        <span style="position:absolute;left:.9rem;top:50%;transform:translateY(-50%);display:flex"><app-icon name="search" [size]="16" color="#b0a89e" /></span>
+        <input type="text" class="cl-input" placeholder="Rechercher…"
+               [(ngModel)]="searchQ" (input)="filter()" style="padding-left:2.5rem">
+      </div>
+      <select class="cl-select" style="width:200px" [(ngModel)]="activecat" (change)="filter()">
+        <option value="">Toutes catégories</option>
+        @for (c of categories; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+      <label style="display:flex;align-items:center;gap:.5rem;font-size:.9rem;cursor:pointer;white-space:nowrap">
+        <input type="checkbox" [(ngModel)]="onlyOpen" (change)="filter()"> Ouvertes maintenant
+      </label>
+    </div>
+
+    <!-- Chips catégories -->
+    <div class="cl-filter-bar">
+      <span class="cl-chip" [class.active]="activecat === ''" (click)="setCategory('')">Toutes</span>
+      @for (c of categories; track c) {
+        <span class="cl-chip" [class.active]="activecat === c" (click)="setCategory(c)">{{ c }}</span>
+      }
+    </div>
+
+    @if (loading) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (filtered.length === 0) {
+      <div class="cl-empty"><div class="cl-empty-icon"><app-icon name="search" [size]="38" /></div><h3>Aucune boutique trouvée</h3><p>Modifiez vos filtres</p></div>
+    } @else {
+      <div class="cl-grid">
+        @for (b of filtered; track b.idboutique) {
+          <a routerLink="/boutiques/{{ b.idboutique }}" style="text-decoration:none">
+            <div class="cl-card cl-card-hover">
+              <div class="cl-boutique-banner" [style.background-image]="'url(' + bannerUrl(b.categorie) + ')'">
+                <div style="position:absolute;top:8px;right:8px;z-index:2">
+                  <span class="cl-badge" [class.cl-badge-open]="isOpen(b.idboutique)" [class.cl-badge-closed]="!isOpen(b.idboutique)">
+                    {{ isOpen(b.idboutique) ? 'Ouvert' : 'Fermé' }}
+                  </span>
+                </div>
+                <span style="position:relative;z-index:2;padding:.5rem .75rem;color:#fff;font-weight:700;font-size:.95rem;text-shadow:0 1px 4px rgba(0,0,0,.6)">{{ b.libelle || b.nom }}</span>
+              </div>
+              <div class="cl-card-body">
+                <div class="cl-boutique-cat">{{ b.categorie || 'Divers' }}</div>
+                @if (b.description) {
+                  <p style="font-size:.8rem;color:#6b5c50;margin:.35rem 0 .4rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ b.description }}</p>
+                }
+                <div class="cl-boutique-meta" style="margin-top:.4rem">
+                  <span style="display:inline-flex;align-items:center;gap:.3rem"><app-icon name="clock" [size]="13" /> {{ b.ouverture || '09:00' }} – {{ b.fermeture || '20:00' }}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>

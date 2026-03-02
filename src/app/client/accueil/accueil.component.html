@@ -1,0 +1,205 @@
+<!-- HERO -->
+<section class="cl-hero">
+  <div class="cl-container">
+    <div style="max-width:600px">
+      <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(251,226,72,.15);border:1px solid rgba(251,226,72,.3);border-radius:20px;padding:.3rem .9rem;margin-bottom:1.2rem">
+        <span style="color:#FBE248;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px">Shopping & Restauration</span>
+      </div>
+      <h1>Bienvenue au<br><span>Centre Commercial</span></h1>
+      <p>Découvrez nos boutiques, promotions exclusives et savourez l'expérience du shopping.</p>
+      <div class="cl-hero-actions">
+        <a routerLink="/boutiques" class="cl-btn cl-btn-primary cl-btn-lg">Explorer les boutiques</a>
+        <a routerLink="/agenda"    class="cl-btn cl-btn-outline cl-btn-lg">Voir l'agenda</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMOTIONS CAROUSEL -->
+<section class="cl-section" style="background:var(--cl-dark);padding-top:3rem;padding-bottom:3rem">
+  <div class="cl-container">
+    <div class="cl-section-header" style="margin-bottom:1.5rem">
+      <h2 class="cl-section-title" style="color:#fff">Promotions en cours</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm" style="color:#d8c9be">Voir tout →</a>
+    </div>
+
+    @if (loading.promos) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (promos.length === 0) {
+      <div class="cl-empty" style="color:#b0a89e"><div class="cl-empty-icon"><app-icon name="tag" [size]="38" /></div><h3>Aucune promotion en cours</h3></div>
+    } @else {
+      <!-- Carousel 4 items -->
+      <div style="overflow:hidden">
+        <div style="display:flex;transition:transform .4s cubic-bezier(.4,0,.2,1)"
+             [style.transform]="'translateX(calc(-' + carouselIdx + ' * 25%))'">
+          @for (p of promos; track p._id) {
+            <div style="flex:0 0 25%;max-width:25%;padding:0 8px;box-sizing:border-box">
+              <div style="background:rgba(251,226,72,.1);border:1px solid rgba(251,226,72,.2);border-radius:14px;padding:1.4rem 1.2rem;height:100%">
+                <div style="color:#FBE248;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.6rem">
+                  {{ p.typeReduction === 'montant' ? 'Réduction fixe' : 'Promotion' }}
+                </div>
+                <div style="font-size:2.2rem;font-weight:800;color:#FBE248;line-height:1;margin-bottom:.6rem">
+                  {{ p.typeReduction === 'montant' ? '-' + p.valeur + ' Ar' : '-' + p.valeur + '%' }}
+                </div>
+                <h3 style="color:#fff;font-size:.93rem;font-weight:700;margin-bottom:.5rem;line-height:1.3">{{ p.titre || p.libelle }}</h3>
+                @if (p.dateFin) {
+                  <span style="font-size:.75rem;color:rgba(251,226,72,.6);display:inline-flex;align-items:center;gap:.25rem"><app-icon name="calendar" [size]="12" /> {{ formatDate(p.dateFin) }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Contrôles -->
+      @if (carouselMax > 0) {
+        <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.2rem">
+          <button (click)="carouselPrev()" style="background:rgba(251,226,72,.12);border:1px solid rgba(251,226,72,.2);color:#FBE248;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center">‹</button>
+          <div style="display:flex;gap:.5rem">
+            @for (d of carouselDots; track d) {
+              <span (click)="carouselGo(d)"
+                    style="height:8px;border-radius:4px;cursor:pointer;transition:all .25s;display:block"
+                    [style.width]="d === carouselIdx ? '24px' : '8px'"
+                    [style.background]="d === carouselIdx ? '#FBE248' : 'rgba(251,226,72,.3)'">
+              </span>
+            }
+          </div>
+          <button (click)="carouselNext()" style="background:rgba(251,226,72,.12);border:1px solid rgba(251,226,72,.2);color:#FBE248;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center">›</button>
+        </div>
+      }
+    }
+  </div>
+</section>
+
+<!-- BOUTIQUES OUVERTES -->
+<section class="cl-section cl-section-white">
+  <div class="cl-container">
+    <div class="cl-section-header">
+      <h2 class="cl-section-title">Ouvertes maintenant</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm">Toutes les boutiques →</a>
+    </div>
+
+    @if (loading.open) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (boutiquesOpen.length === 0) {
+      <div class="cl-empty"><div class="cl-empty-icon"><app-icon name="lock" [size]="38" /></div><h3>Aucune boutique ouverte en ce moment</h3></div>
+    } @else {
+      <div class="cl-grid">
+        @for (b of boutiquesOpen; track b.idboutique) {
+          <a routerLink="/boutiques/{{ b.idboutique }}" style="text-decoration:none">
+            <div class="cl-card cl-card-hover">
+              <div class="cl-boutique-banner" [style.background-image]="'url(' + bannerUrl(b.categorie) + ')'">
+                <div style="position:absolute;top:8px;right:8px;z-index:2"><span class="cl-badge cl-badge-open">Ouvert</span></div>
+                <span style="position:relative;z-index:2;padding:.5rem .75rem;color:#fff;font-weight:700;font-size:.95rem;text-shadow:0 1px 4px rgba(0,0,0,.6)">{{ b.libelle || b.nom }}</span>
+              </div>
+              <div class="cl-card-body">
+                <div class="cl-boutique-cat">{{ b.categorie || 'Divers' }}</div>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- FOODCOURT TEASER -->
+<section class="cl-section">
+  <div class="cl-container">
+    <div style="background:linear-gradient(135deg,rgba(55,42,33,.92) 0%,rgba(55,42,33,.8) 100%),url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=80') center/cover no-repeat;border-radius:20px;padding:3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
+      <div>
+        <div style="color:#FBE248;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem">Espace restauration</div>
+        <h2 style="color:#fff;font-size:1.7rem;font-weight:700;margin-bottom:.7rem">Découvrez notre FoodCourt</h2>
+        <p style="color:#d8c9be;max-width:420px;font-size:.93rem">Large sélection de restaurants, snacks et cafés au cœur du centre commercial.</p>
+      </div>
+      <a routerLink="/foodcourt" class="cl-btn cl-btn-primary cl-btn-lg">Voir le FoodCourt</a>
+    </div>
+  </div>
+</section>
+
+<!-- TOUTES LES BOUTIQUES -->
+<section class="cl-section cl-section-white">
+  <div class="cl-container">
+    <div class="cl-section-header">
+      <h2 class="cl-section-title">Nos boutiques</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm">Voir tout →</a>
+    </div>
+
+    @if (loading.all) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (boutiques.length === 0) {
+      <div class="cl-empty"><div class="cl-empty-icon"><app-icon name="store" [size]="38" /></div><h3>Aucune boutique disponible</h3></div>
+    } @else {
+      <div class="cl-grid">
+        @for (b of boutiques; track b.idboutique) {
+          <a routerLink="/boutiques/{{ b.idboutique }}" style="text-decoration:none">
+            <div class="cl-card cl-card-hover">
+              <div class="cl-boutique-banner" [style.background-image]="'url(' + bannerUrl(b.categorie) + ')'">
+                <span style="position:relative;z-index:2;padding:.5rem .75rem;color:#fff;font-weight:700;font-size:.95rem;text-shadow:0 1px 4px rgba(0,0,0,.6)">{{ b.libelle || b.nom }}</span>
+              </div>
+              <div class="cl-card-body">
+                <div class="cl-boutique-cat">{{ b.categorie || 'Divers' }}</div>
+                <div class="cl-boutique-meta" style="margin-top:.4rem">
+                  <span style="display:inline-flex;align-items:center;gap:.3rem"><app-icon name="clock" [size]="13" /> {{ b.ouverture || '09:00' }} – {{ b.fermeture || '20:00' }}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- PRODUITS TENDANCE -->
+<section class="cl-section" style="background:var(--cl-dark)">
+  <div class="cl-container">
+    <div class="cl-section-header" style="margin-bottom:1.75rem">
+      <h2 class="cl-section-title" style="color:#fff">Produits du moment</h2>
+      <a routerLink="/boutiques" class="cl-btn cl-btn-ghost cl-btn-sm" style="color:#d8c9be">Voir les boutiques →</a>
+    </div>
+
+    @if (loading.produits) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else if (produits.length === 0) {
+      <div class="cl-empty" style="color:#b0a89e"><div class="cl-empty-icon"><app-icon name="shopping-bag" [size]="38" /></div><h3>Aucun produit disponible</h3></div>
+    } @else {
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.1rem">
+        @for (p of produits; track p._id) {
+          <div class="cl-produit-card"
+               routerLink="/boutiques/{{ p.idboutique }}">
+            <!-- Image -->
+            <div style="height:160px;overflow:hidden;position:relative">
+              <img [src]="produitImgUrl(p)" [alt]="p.libelle" class="cl-produit-img">
+              @if (p.prixOriginal && p.prixOriginal > p.prix) {
+                <span style="position:absolute;top:8px;left:8px;background:#FBE248;color:#372A21;font-size:.7rem;font-weight:800;padding:.2rem .55rem;border-radius:20px">
+                  -{{ ((1 - p.prix/p.prixOriginal)*100) | number:'1.0-0' }}%
+                </span>
+              }
+            </div>
+            <!-- Infos -->
+            <div style="padding:.9rem 1rem">
+              @if (p.categorie) {
+                <div style="font-size:.68rem;color:rgba(251,226,72,.6);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:.3rem">{{ p.categorie }}</div>
+              }
+              <div style="color:#fff;font-weight:700;font-size:.92rem;line-height:1.3;margin-bottom:.5rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ p.libelle }}</div>
+              <div style="display:flex;align-items:center;gap:.5rem">
+                @if (p.prix) {
+                  <span style="color:#FBE248;font-weight:800;font-size:1.05rem">{{ p.prix | number:'1.0-0' }} Ar</span>
+                }
+                @if (p.prixOriginal && p.prixOriginal > p.prix) {
+                  <span style="color:rgba(255,255,255,.35);font-size:.82rem;text-decoration:line-through">{{ p.prixOriginal | number:'1.0-0' }} Ar</span>
+                }
+              </div>
+              @if (p.stock !== undefined) {
+                <div style="margin-top:.4rem;font-size:.72rem;color:rgba(255,255,255,.4)">
+                  {{ p.stock > 0 ? 'En stock' : 'Rupture' }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

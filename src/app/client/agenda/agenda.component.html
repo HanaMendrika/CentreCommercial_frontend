@@ -1,0 +1,144 @@
+<div class="cl-page-header">
+  <div class="cl-container">
+    <div class="cl-breadcrumb">
+      <a routerLink="/">Accueil</a><span>/</span><span>Agenda</span>
+    </div>
+    <h1>Agenda & Horaires</h1>
+    <p>Horaires des boutiques et promotions à venir</p>
+  </div>
+</div>
+
+<section class="cl-section">
+  <div class="cl-container">
+    @if (loading) {
+      <div class="cl-loading"><div class="cl-spinner"></div></div>
+    } @else {
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:start" class="agenda-layout">
+
+        <!-- Calendrier + Upcoming -->
+        <div>
+          <div class="cl-calendar">
+            <div class="cl-cal-header">
+              <h2>{{ monthLabel }}</h2>
+              <div style="display:flex;gap:.4rem">
+                <button (click)="changeMonth(-1)" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;border:none;cursor:pointer;font-size:1rem">‹</button>
+                <button (click)="changeMonth(1)"  style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;border:none;cursor:pointer;font-size:1rem">›</button>
+              </div>
+            </div>
+            <div class="cl-cal-weekdays">
+              @for (d of weekDays; track d) { <span>{{ d }}</span> }
+            </div>
+            <div class="cl-cal-grid">
+              @for (week of weeks; track $index) {
+                @for (day of week; track $index) {
+                  <div class="cl-cal-day"
+                       [class.other-month]="day.otherMonth"
+                       [class.is-today]="isToday(day.date)"
+                       [class.selected]="isSelected(day.date)"
+                       (click)="selectDay(day)">
+                    <div class="cl-cal-num">{{ day.date.getDate() }}</div>
+                    @for (ev of day.events.slice(0,2); track $index) {
+                      <div class="cl-cal-event {{ ev.type }}">{{ ev.label }}</div>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          </div>
+
+          <!-- Promotions à venir -->
+          <div style="margin-top:2rem">
+            <h2 class="cl-section-title" style="margin-bottom:1.25rem">Promotions à venir</h2>
+            @if (upcoming.length === 0) {
+              <div class="cl-empty"><div class="cl-empty-icon"><app-icon name="tag" [size]="38" /></div><h3>Aucune promotion à venir</h3></div>
+            } @else {
+              <div class="cl-grid">
+                @for (p of upcoming; track p._id) {
+                  <div class="cl-promo-card">
+                    <div>
+                      <h3 style="font-size:.95rem;font-weight:700;color:#372A21">{{ p.titre || p.libelle || 'Promotion' }}</h3>
+                      <p style="font-size:.82rem;color:#4e3d30">{{ p.boutique?.libelle || 'Toutes boutiques' }}</p>
+                      @if (p.dateDebut) {
+                        <p style="font-size:.75rem;margin-top:.2rem;color:#4e3d30">
+                          Du {{ formatDate(p.dateDebut) }} au {{ formatDate(p.dateFin) }}
+                        </p>
+                      }
+                    </div>
+                    <div class="cl-promo-value">@if (p.valeur) { {{'-' + p.valeur + '%'}} } @else { <app-icon name="gift" [size]="22" /> }</div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Panneau détail -->
+        <div style="position:sticky;top:calc(var(--cl-nav-h) + 1rem)">
+          <div class="cl-card">
+            <div style="background:#372A21;padding:1.2rem;color:#fff;border-radius:var(--cl-radius) var(--cl-radius) 0 0">
+              <h3 style="font-size:.95rem">
+                @if (selected) {
+                  {{ days[(selected.date.getDay() + 6) % 7] }}
+                  {{ selected.date.getDate() }} {{ months[selected.date.getMonth()] }}
+                  {{ selected.date.getFullYear() }}
+                } @else {
+                  Sélectionnez un jour
+                }
+              </h3>
+              <p style="font-size:.82rem;color:#d8c9be;margin-top:.25rem">
+                @if (selected) {
+                  {{ selectedBoutiques.length }} boutique(s) · {{ selectedPromos.length }} promo(s)
+                } @else {
+                  Cliquez sur une date
+                }
+              </p>
+            </div>
+            <div class="cl-card-body">
+              @if (!selected) {
+                <div class="cl-empty" style="padding:1.5rem">
+                  <div class="cl-empty-icon"><app-icon name="calendar" [size]="38" /></div>
+                  <p>Choisissez une date pour voir les détails</p>
+                </div>
+              } @else {
+                @if (selectedBoutiques.length > 0) {
+                  <h4 style="font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:#b0a89e;margin-bottom:.6rem">Boutiques ouvertes</h4>
+                  @for (b of selectedBoutiques; track b._id) {
+                    <div class="cl-horaire-row" [class.is-today]="isToday(selected.date)">
+                      <span>{{ b.libelle || b.nom }}</span>
+                      <span>{{ b.ouverture || '—' }} - {{ b.fermeture || '—' }}</span>
+                    </div>
+                  }
+                }
+                @if (selectedPromos.length > 0) {
+                  <h4 style="font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:#b0a89e;margin:1rem 0 .6rem">Promotions</h4>
+                  @for (p of selectedPromos; track p._id) {
+                    <div class="cl-promo-card" style="margin-bottom:.5rem">
+                      <div>
+                        <strong style="font-size:.88rem">{{ p.libelle }}</strong>
+                        <p style="font-size:.78rem">{{ p.boutique?.libelle }}</p>
+                      </div>
+                      <div style="font-size:1.3rem;font-weight:700;color:#372A21">@if (p.valeur) { {{'-'+p.valeur+'%'}} } @else { <app-icon name="gift" [size]="22" /> }</div>
+                    </div>
+                  }
+                }
+                @if (selectedBoutiques.length === 0 && selectedPromos.length === 0) {
+                  <div class="cl-empty" style="padding:1.5rem">
+                    <div class="cl-empty-icon"><app-icon name="moon" [size]="38" /></div>
+                    <p>Pas d'événements ce jour</p>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+
+      </div>
+    }
+  </div>
+</section>
+
+<style>
+@media (max-width: 900px) {
+  .agenda-layout { grid-template-columns: 1fr !important; }
+}
+</style>

@@ -1,0 +1,52 @@
+<div class="auth-container">
+
+  <div class="auth-card">
+
+    <!-- PARTIE FORMULAIRE -->
+    <div class="auth-form">
+      <a routerLink="/" class="auth-logo">
+        <div><img class="brand-icon" src="/logo/logoTrans.png" alt="Logo"></div>
+        <span>Centre Commercial</span>
+      </a>
+
+      <h1 class="auth-title">Connexion</h1>
+      <p class="auth-sub">Accédez à votre espace client</p>
+
+      @if (error) { <div class="auth-error">{{ error }}</div> }
+
+      <div class="auth-fg">
+        <label class="auth-label">Adresse email</label>
+        <input type="email" class="auth-input" [(ngModel)]="mail">
+      </div>
+
+      <div class="auth-fg">
+        <label class="auth-label">Mot de passe</label>
+        <input type="password" class="auth-input" [(ngModel)]="mdp">
+      </div>
+
+<button 
+  class="auth-btn"
+  [disabled]="loading"
+  (click)="submit()">
+  {{ loading ? 'Connexion…' : 'Se connecter' }}
+</button>
+
+      <p class="auth-footer">
+        Pas encore de compte ?
+        <a routerLink="/client/register">Créer un compte</a>
+      </p>
+
+      <div class="auth-divider">Accès boutique</div>
+      <a routerLink="/login" class="auth-ghost">
+        Connexion espace boutique / admin
+      </a>
+    </div>
+
+    <!-- IMAGE -->
+    <div class="auth-image">
+      <img src="/img/ito.jpg" alt="Illustration boutique">
+    </div>
+
+  </div>
+
+</div>

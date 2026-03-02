@@ -1,0 +1,38 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon"><img src="/logo/logoTrans.png" alt="Logo"></div>
+    <div class="user-row">
+      <div class="user-avatar">{{ initiale }}</div>
+      <div>
+        <div class="user-name">{{ user?.matricule }}</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    @for (item of nav; track item.path) {
+      <a class="nav-link"
+         [routerLink]="['/admin', item.path]"
+         routerLinkActive="active">
+        <span class="nav-icon">
+          <img [src]="item.icon" [alt]="item.label" class="nav-img">
+        </span>
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" (click)="logout()">↩ Déconnexion</button>
+
+    <footer style="font-size: 0.7rem; color: aliceblue; text-align: center; margin-top: 20px;">
+  RAKOTOARITAHINA Labarre Itokiana Teddy ETU002495 | Mendrika ANDRIAMAROLAFY ETU002796
+</footer>
+
+  </div>
+</aside>
+
+<main class="main">
+  <router-outlet />
+</main>

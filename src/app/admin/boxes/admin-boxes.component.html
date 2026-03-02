@@ -1,0 +1,164 @@
+<div class="cc-page">
+  <div class="cc-page-header">
+    <div>
+      <h1 class="cc-page-title"><img src="/icons/loyer.png" alt=""> Emplacements (Boxes)</h1>
+      <p class="cc-page-sub">Gérez les espaces physiques du centre pouvant accueillir une boutique</p>
+    </div>
+    <button class="cc-btn-primary" (click)="openAdd()">+ Nouvel emplacement</button>
+  </div>
+
+  <!-- Explication contextuelle -->
+  <div class="cc-info-box">
+    <strong>Qu'est-ce qu'un emplacement ?</strong>
+    Un emplacement (ou "box") est un espace physique du centre commercial qui peut être loué à une boutique.
+    Chaque emplacement a un numéro unique, une zone (niveau / aile) et un statut de disponibilité.
+    Un emplacement <strong>disponible</strong> est libre à louer — un emplacement <strong>occupé</strong> est déjà attribué.
+  </div>
+
+  <!-- Stats rapides -->
+  <div class="cc-stats" style="margin-bottom:20px">
+    <div class="cc-stat">
+      <div class="cc-stat-label">Total emplacements</div>
+      <div class="cc-stat-value">{{ items.length }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Disponibles</div>
+      <div class="cc-stat-value accent">{{ countDisponible }}</div>
+    </div>
+    <div class="cc-stat">
+      <div class="cc-stat-label">Occupés</div>
+      <div class="cc-stat-value">{{ countOccupe }}</div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+    <button class="cc-btn-filter" [class.active]="filterDisponible===''"      (click)="filterDisponible='';load()">Tous</button>
+    <button class="cc-btn-filter success" [class.active]="filterDisponible==='true'"  (click)="filterDisponible='true';load()">Disponibles</button>
+    <button class="cc-btn-filter danger"  [class.active]="filterDisponible==='false'" (click)="filterDisponible='false';load()">Occupés</button>
+  </div>
+
+  <div *ngIf="error" class="cc-error">{{ error }}</div>
+  <div *ngIf="loading" class="cc-loading"><div class="loader"></div></div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="items.length === 0" class="cc-table-wrap">
+      <div class="cc-empty">
+        <div class="cc-empty-icon">🏢</div>
+        <p>Aucun emplacement trouvé</p>
+      </div>
+    </div>
+
+    <!-- Grille visuelle par zone -->
+    <ng-container *ngIf="items.length > 0">
+      <div *ngFor="let zone of zones" style="margin-bottom:24px">
+        <h3 class="zone-title">{{ zone }}</h3>
+        <div class="box-grid">
+          <div *ngFor="let box of itemsByZone(zone)"
+               class="box-card"
+               [class.disponible]="box.disponible"
+               [class.occupe]="!box.disponible">
+            <div class="box-numero">{{ box.numero }}</div>
+            <div class="box-id">{{ box.idEmplacement }}</div>
+            <div class="box-status-badge">
+              <span class="cc-badge" [class.cc-badge-success]="box.disponible" [class.cc-badge-danger]="!box.disponible">
+                {{ box.disponible ? 'Libre' : 'Occupé' }}
+              </span>
+            </div>
+            <button class="box-edit-btn" (click)="openEdit(box)" title="Modifier">✏️ Modifier</button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+
+<!-- MODAL -->
+<div class="cc-overlay" *ngIf="showModal" (click)="close()">
+  <div class="cc-modal" (click)="$event.stopPropagation()">
+    <div class="cc-modal-hd">
+      <h3 class="cc-modal-title">{{ isEdit ? 'Modifier l\'emplacement' : 'Nouvel emplacement' }}</h3>
+      <button class="cc-modal-close" (click)="close()">×</button>
+    </div>
+
+    <div *ngIf="formError" class="cc-error">{{ formError }}</div>
+
+    <div class="cc-fg">
+      <label class="cc-label">Numéro *</label>
+      <input class="cc-input" [(ngModel)]="form.numero" placeholder="Ex: N1-A3" [readonly]="isEdit">
+      <small style="color:var(--cc-muted);font-size:.75rem">Format recommandé : Niveau-Aile (ex: N0-A1, N1-B2, N2-FC1)</small>
+    </div>
+    <div class="cc-fg">
+      <label class="cc-label">Zone / Description</label>
+      <input class="cc-input" [(ngModel)]="form.zone" placeholder="Ex: Niveau 1 — Aile A">
+    </div>
+    <div class="cc-fg" style="display:flex;align-items:center;gap:12px;padding:10px 0">
+      <label style="color:var(--cc-text);font-size:.9rem;font-weight:500">Disponible :</label>
+      <div style="display:flex;gap:12px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--cc-text)">
+          <input type="radio" name="dispo" [value]="true" [(ngModel)]="form.disponible" style="accent-color:#43a047">
+          <span>Oui — espace libre</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--cc-text)">
+          <input type="radio" name="dispo" [value]="false" [(ngModel)]="form.disponible" style="accent-color:#e53935">
+          <span>Non — déjà occupé</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="cc-modal-ft">
+      <button class="cc-btn-ghost" (click)="close()">Annuler</button>
+      <button class="cc-btn-primary" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Enregistrement...' : (isEdit ? 'Modifier' : 'Créer') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.cc-info-box {
+  background: rgba(251,226,72,.06); border: 1px solid rgba(251,226,72,.2);
+  border-radius: 10px; padding: 14px 18px; margin-bottom: 20px;
+  font-size: .84rem; color: var(--cc-text); line-height: 1.6;
+}
+.cc-btn-filter {
+  padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(251,226,72,.3);
+  background: transparent; color: var(--cc-muted); font-size: .82rem; font-weight: 500;
+  cursor: pointer; transition: all .18s;
+}
+.cc-btn-filter:hover { background: rgba(251,226,72,.08); color: var(--cc-text); }
+.cc-btn-filter.active { background: rgba(251,226,72,.18); color: #FBE248; border-color: #FBE248; font-weight: 600; }
+.cc-btn-filter.success.active { background: rgba(67,160,71,.2); color: #43a047; border-color: #43a047; }
+.cc-btn-filter.danger.active  { background: rgba(229,57,53,.2); color: #e53935; border-color: #e53935; }
+
+.zone-title {
+  font-size: .82rem; font-weight: 700; color: var(--cc-muted);
+  text-transform: uppercase; letter-spacing: .05em;
+  margin: 0 0 12px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--cc-border);
+}
+.box-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px;
+}
+.box-card {
+  background: var(--cc-card); border: 2px solid var(--cc-border);
+  border-radius: 12px; padding: 16px 12px; text-align: center;
+  transition: transform .15s, box-shadow .15s;
+}
+.box-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+.box-card.disponible { border-color: rgba(67,160,71,.5); background: rgba(67,160,71,.04); }
+.box-card.occupe     { border-color: rgba(229,57,53,.4); background: rgba(229,57,53,.04); }
+.box-numero {
+  font-size: 1.15rem; font-weight: 800; color: var(--cc-text); margin-bottom: 4px;
+}
+.box-id {
+  font-size: .7rem; color: var(--cc-muted); margin-bottom: 8px; font-family: monospace;
+}
+.box-status-badge { margin-bottom: 10px; }
+.box-edit-btn {
+  width: 100%; padding: 5px 8px; border-radius: 6px; font-size: .75rem;
+  background: transparent; border: 1px solid var(--cc-border);
+  color: var(--cc-muted); cursor: pointer; transition: all .15s;
+}
+.box-edit-btn:hover { background: rgba(251,226,72,.08); color: var(--cc-text); border-color: rgba(251,226,72,.3); }
+</style>

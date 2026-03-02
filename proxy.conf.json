@@ -1,7 +1,7 @@
 {
-  "/api/*": {
-    "target": "http://localhost:5000",
+  "/api": {
+    "target": "https://centre-commercial.onrender.com/",
     "secure": false,
-    "logLevel": "debug"
+    "changeOrigin": true
   }
 }
