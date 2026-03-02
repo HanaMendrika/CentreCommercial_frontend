@@ -93,7 +93,7 @@ export class BoutiqueDetailComponent implements OnInit {
   submitCommande(): void {
     if (!this.cmdAdresse.trim()) { this.cmdError = 'Entrez une adresse de livraison'; return; }
     this.cmdLoading = true; this.cmdError = '';
-    this.api.passerCommande({ produits: [{ produit: this.selectedProd._id, quantite: this.cmdQty }], adresseLivraison: this.cmdAdresse }).subscribe({
+    this.api.passerCommande({ idboutique: this.id, produits: [{ produit: this.selectedProd.idProduit, quantite: this.cmdQty }], adresseLivraison: this.cmdAdresse }).subscribe({
       next: () => { this.cmdLoading = false; this.closeModal(); this.showToast('Commande passée avec succès !', 'success'); },
       error: (e) => { this.cmdLoading = false; this.cmdError = e.error?.message || 'Erreur lors de la commande'; }
     });
