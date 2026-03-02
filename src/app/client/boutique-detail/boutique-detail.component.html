@@ -224,6 +224,52 @@
         <button class="cl-btn cl-btn-primary cl-btn-block cl-btn-lg" style="margin-top:.5rem" [disabled]="cmdLoading" (click)="submitCommande()">
           {{ cmdLoading ? 'Envoi…' : 'Confirmer la commande' }}
         </button>
+        <button class="cl-btn cl-btn-success cl-btn-block cl-btn-lg"
+        style="margin-top:.5rem"
+        [disabled]="cmdLoading"
+        (click)="openPaymentConfirm()">
+  Commander et payer
+</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal confirmation paiement -->
+@if (showPaymentConfirm && selectedProd) {
+  <div class="cl-modal-overlay"
+       (click)="$event.target === $event.currentTarget && closePaymentConfirm()">
+    <div class="cl-modal">
+      <div class="cl-modal-header">
+        <h2>Confirmation de paiement</h2>
+        <button class="cl-modal-close"
+                (click)="closePaymentConfirm()">✕</button>
+      </div>
+
+      <div class="cl-modal-body">
+        <p>
+          Vous allez payer
+          <strong>
+            {{ selectedProd.prix * cmdQty | number:'1.0-0' }} Ar
+          </strong>
+        </p>
+
+        <p>
+          Produit : <strong>{{ selectedProd.libelle }}</strong>
+        </p>
+
+        <div style="margin-top:1rem; display:flex; gap:1rem;">
+          <button class="cl-btn cl-btn-outline"
+                  (click)="closePaymentConfirm()">
+            Annuler
+          </button>
+
+          <button class="cl-btn cl-btn-outline"
+                  [disabled]="cmdLoading"
+                  (click)="submitCommandeEtPayer()">
+            Confirmer le paiement
+          </button>
+        </div>
       </div>
     </div>
   </div>

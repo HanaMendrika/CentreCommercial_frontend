@@ -30,6 +30,7 @@ export class BoutiqueDetailComponent implements OnInit {
 
   // Modal commande
   showModal   = false;
+  showPaymentConfirm = false;
   selectedProd: any = null;
   cmdQty      = 1;
   cmdAdresse  = '';
@@ -132,5 +133,49 @@ export class BoutiqueDetailComponent implements OnInit {
     });
   }
 
+  openPaymentConfirm() {
+  if (!this.cmdQty || !this.cmdAdresse) {
+    this.cmdError = "Veuillez remplir la quantité et l'adresse.";
+    return;
+  }
+
+  this.cmdError = '';
+  this.showPaymentConfirm = true;
+}
+
+closePaymentConfirm() {
+  this.showPaymentConfirm = false;
+}
+
+submitCommandeEtPayer() {
+  if (!this.cmdAdresse.trim()) { this.cmdError = "Veuillez remplir l'adresse."; return; }
+  this.cmdLoading = true;
+  this.cmdError = '';
+
+  const payload = {
+    idProduit: this.selectedProd._id,
+    quantite: this.cmdQty,
+    prix: this.selectedProd.prix,
+    idAcheteur: this.clientId,
+    adresseLivraison: this.cmdAdresse
+  };
+
+  this.api.commanderEtPayer(this.id, payload).subscribe({
+    next: () => {
+      this.cmdLoading = false;
+      this.showPaymentConfirm = false;
+      this.closeModal();
+      this.showToast('Commande et paiement effectués avec succès !', 'success');
+    },
+    error: (e) => {
+      this.cmdLoading = false;
+      this.showPaymentConfirm = false;
+      this.cmdError = e.error?.message || 'Erreur lors de la commande';
+    }
+  });
+}
+
   get clientId(): string { return this.auth.getClient()?.id || ''; }
 }
+
+

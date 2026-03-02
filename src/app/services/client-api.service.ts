@@ -100,4 +100,11 @@ export class ClientApiService {
   deleteAccount(clientId: string): Observable<any> {
     return this.http.delete<any>(`/api/clients/${clientId}`, { headers: this.authHeaders });
   }
+
+  //commande et payement
+commanderEtPayer(idBoutique: string, data: any): Observable<any> {
+  return this.http.post<any>(`/api/commandes/boutique/${idBoutique}/commander-payer`, data, { headers: this.authHeaders });
 }
+
+}
+
