@@ -12,8 +12,8 @@
     <button class="cc-btn-filter" [class.active]="filterMode==='all'"     (click)="setFilter('all')">Toutes</button>
     <button class="cc-btn-filter" [class.active]="filterMode==='open'"    (click)="setFilter('open')">Ouvertes</button>
     <button class="cc-btn-filter" [class.active]="filterMode==='closed'"  (click)="setFilter('closed')">Fermées</button>
-    <button class="cc-btn-filter success" [class.active]="filterMode==='paye'"   (click)="setFilter('paye')">✅ Loyer payé</button>
-    <button class="cc-btn-filter danger"  [class.active]="filterMode==='nonpaye'" (click)="setFilter('nonpaye')">⚠️ Loyer impayé</button>
+    <button class="cc-btn-filter success" [class.active]="filterMode==='paye'"   (click)="setFilter('paye')">Loyer payé</button>
+    <button class="cc-btn-filter danger"  [class.active]="filterMode==='nonpaye'" (click)="setFilter('nonpaye')">Loyer impayé</button>
   </div>
 
   <div *ngIf="error" class="cc-error">{{ error }}</div>
@@ -22,7 +22,7 @@
   <ng-container *ngIf="!loading">
     <div *ngIf="items.length === 0" class="cc-table-wrap">
       <div class="cc-empty">
-        <div class="cc-empty-icon">🏪</div>
+        <div class="cc-empty-icon"><img src="icons/question.png" ></div>
         <p>Aucune boutique trouvée</p>
       </div>
     </div>
@@ -57,7 +57,7 @@
     <!-- Vue normale (boutiques) : Toutes / Ouvertes / Fermées / Non payées -->
     <div *ngIf="items.length > 0 && filterMode !== 'paye'" class="cc-table-wrap">
       <div *ngIf="filterMode === 'nonpaye'" class="cc-info-banner cc-info-banner-warn">
-        ⚠️ {{ items.length }} boutique(s) n'ont pas encore payé leur loyer ce mois
+        {{ items.length }} boutique(s) n'ont pas encore payé leur loyer ce mois
       </div>
       <table class="cc-table">
         <thead>
@@ -86,8 +86,8 @@
             </td>
             <td>
               <div class="cc-actions">
-                <button class="cc-btn-icon" (click)="openEdit(b)" title="Modifier">✏️</button>
-                <button class="cc-btn-icon danger" (click)="delete(b)" title="Supprimer">🗑️</button>
+                <button class="cc-btn-icon" (click)="openEdit(b)" title="Modifier"><img src="icons/modifier.png" ></button>
+                <button class="cc-btn-icon danger" (click)="delete(b)" title="Supprimer"><img src="icons/supprimer.png" ></button>
               </div>
             </td>
           </tr>

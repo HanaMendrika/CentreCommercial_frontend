@@ -70,13 +70,13 @@
             <td style="font-size:.8rem;color:var(--cc-muted)">
               {{ c.produits?.length || 0 }} article(s)
             </td>
-            <td><span class="cc-badge" [ngClass]="statusBadge(c.idstatus)">{{ c.idstatus }}</span></td>
+            <td><span class="cc-badge" [ngClass]="statusBadge(c.idstatus)">{{ statusLabel(c.idstatus) }}</span></td>
             <td style="font-size:.82rem;color:var(--cc-muted)">{{ c.createdAt | date:'dd/MM/yyyy' }}</td>
             <td>
               <div class="cc-actions">
-                <button class="cc-btn-icon" (click)="viewDetail(c)" title="Détail">👁️</button>
-                <button class="cc-btn-icon" (click)="openEdit(c)" title="Modifier">✏️</button>
-                <button class="cc-btn-icon danger" (click)="delete(c.idcommande)" title="Supprimer">🗑️</button>
+                <button class="cc-btn-icon" (click)="viewDetail(c)" title="Détail"><img src="/icons/oeil.png"></button>
+                <button class="cc-btn-icon" (click)="openEdit(c)" title="Modifier"><img src="/icons/modifier.png"></button>
+                <!-- <button class="cc-btn-icon danger" (click)="delete(c.idcommande)" title="Supprimer">🗑️</button> -->
               </div>
             </td>
           </tr>
@@ -127,6 +127,10 @@
       </button>
     </div>
   </div>
+
+  
+  
+
 </div>
 
 <!-- MODAL DETAIL -->
@@ -142,8 +146,7 @@
       </div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--cc-border)">
         <span class="cc-label" style="margin:0">Statut</span>
-        <span class="cc-badge" [ngClass]="statusBadge(detailCmd.idstatus)">{{ detailCmd.idstatus }}</span>
-      </div>
+<span class="cc-badge" [ngClass]="statusBadge(detailCmd.idstatus)">{{ statusLabel(detailCmd.idstatus) }}</span>      </div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--cc-border)">
         <span class="cc-label" style="margin:0">Date</span><span style="color:var(--cc-text)">{{ detailCmd.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
       </div>
@@ -153,5 +156,14 @@
       <span style="color:var(--cc-text)">{{ p.idproduit }}</span>
       <span class="cc-badge cc-badge-neutral">× {{ p.quantite }}</span>
     </div>
+
+  <!-- Remplacez le bloc <td>...</td> par ceci, juste avant </div> de fermeture de la modal -->
+<ng-container *ngIf="detailCmd.idstatus !== 'confirmé' && detailCmd.idstatus !== 'annulé'">
+  <div class="cc-modal-ft" style="margin-top:16px">
+    <button class="cc-btn-primary" (click)="updateStatus(detailCmd, 'confirmé')" title="Confirmer">Confirmer et payé</button>
+<button class="cc-btn-icon danger" (click)="updateStatus(detailCmd, 'annulé')" title="Annuler">Annuler</button>
+  </div>
+</ng-container>
+
   </div>
 </div>

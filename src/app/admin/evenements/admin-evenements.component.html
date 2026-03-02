@@ -32,7 +32,7 @@
   <ng-container *ngIf="!loading">
     <div *ngIf="items.length === 0" class="cc-table-wrap">
       <div class="cc-empty">
-        <div class="cc-empty-icon">📅</div>
+        <div class="cc-empty-icon"><img src="icons/question.png" ></div>
         <p>Aucun événement trouvé</p>
       </div>
     </div>
@@ -71,7 +71,7 @@
             </td>
             <td>
               <div class="cc-actions">
-                <button class="cc-btn-icon" (click)="openEdit(ev)" title="Modifier">✏️</button>
+                <button class="cc-btn-icon" (click)="openEdit(ev)" title="Modifier"><img src="icons/modifier.png" ></button>
               </div>
             </td>
           </tr>

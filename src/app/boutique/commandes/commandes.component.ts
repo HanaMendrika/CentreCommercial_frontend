@@ -29,20 +29,34 @@ export class CommandesComponent implements OnInit {
     this.load(); 
   }
 
-  countByStatus(s: string) { 
-    return this.items.filter(c => c.idstatus === s).length; 
+ countByStatus(s: string): number {
+  if (s === 'en attente') {
+    return this.items.filter(c => c.idstatus === 'STA001' || c.idstatus === 'PAYEE').length;
   }
+  return this.items.filter(c => c.idstatus === s).length;
+}
 
-  statusBadge(s: string) {
-    const map: any = { 
-      'en attente': 'cc-badge-warning', 
-      'confirmé': 'cc-badge-success', 
-      'livré': 'cc-badge-info', 
-      'annulé': 'cc-badge-danger' 
-    };
-    return map[s] || 'cc-badge-neutral';
-  }
+ statusLabel(s: string): string {
+  const map: any = {
+    'STA001': 'Non payé - En attente',
+    'PAYEE':  'Payé - En attente',
+    'confirmé': 'Confirmé',
+    'livré':    'Livré',
+    'annulé':   'Annulé'
+  };
+  return map[s] || s;
+}
 
+statusBadge(s: string) {
+  const map: any = {
+    'STA001':   'cc-badge-warning',
+    'PAYEE':    'cc-badge-warning',  
+    'confirmé': 'cc-badge-success',
+    'livré':    'cc-badge-info',
+    'annulé':   'cc-badge-danger'
+  };
+  return map[s] || 'cc-badge-neutral';
+}
   load() {
     this.loading = true; 
     this.error = '';
@@ -131,4 +145,9 @@ export class CommandesComponent implements OnInit {
       error: e => this.error = e.error?.message || 'Erreur' 
     });
   }
+
+  updateStatus(c: any, status: string) {
+  // TODO: brancher sur this.api.updateStatutCommande(...) quand le backend sera prêt
+  console.log('updateStatus', c.idcommande, status);
+}
 }
