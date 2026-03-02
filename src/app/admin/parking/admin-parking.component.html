@@ -67,7 +67,7 @@
   <ng-container *ngIf="!loading">
     <div *ngIf="items.length === 0" class="cc-table-wrap">
       <div class="cc-empty">
-        <div class="cc-empty-icon">🚗</div>
+        <div class="cc-empty-icon"><img src="/icons/question.png"></div>
         <p>Aucune réservation trouvée</p>
       </div>
     </div>
@@ -102,8 +102,8 @@
             <td style="font-size:.82rem">{{ r.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
             <td>
               <div class="cc-actions">
-                <button class="cc-btn-icon" (click)="openEdit(r)" title="Modifier">✏️</button>
-                <button class="cc-btn-icon danger" (click)="delete(r)" title="Supprimer">🗑️</button>
+                <button class="cc-btn-icon" (click)="openEdit(r)" title="Modifier"><img src="/icons/modifier.png"></button>
+                <button class="cc-btn-icon danger" (click)="delete(r)" title="Supprimer"><img src="/icons/supprimer.png"></button>
               </div>
             </td>
           </tr>

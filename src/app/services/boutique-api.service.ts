@@ -129,4 +129,10 @@ export class BoutiqueApiService {
   deleteCommande(idCommande: string): Observable<any> {
     return this.http.delete(`/api/commandes/${idCommande}`);
   }
+
+  //confirmer et payer
+ updateStatutCommande(id: string) {
+  return this.http.patch(`/api/commandes/${id}/statut`, { idstatus: 'PAYEE' });
 }
+}
+

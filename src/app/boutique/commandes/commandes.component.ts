@@ -33,6 +33,11 @@ export class CommandesComponent implements OnInit {
   if (s === 'en attente') {
     return this.items.filter(c => c.idstatus === 'STA001' || c.idstatus === 'PAYEE').length;
   }
+
+  if (s === 'confirmé') {
+    return this.items.filter(c => c.idstatus === 'confirmé' || c.idstatus === 'CONFIRME').length;
+  }
+
   return this.items.filter(c => c.idstatus === s).length;
 }
 
@@ -146,8 +151,15 @@ statusBadge(s: string) {
     });
   }
 
-  updateStatus(c: any, status: string) {
-  // TODO: brancher sur this.api.updateStatutCommande(...) quand le backend sera prêt
-  console.log('updateStatus', c.idcommande, status);
+updateStatus(c: any) {
+  if (!confirm(`Voulez-vous confirmer cette commande ?`)) return;
+
+  this.api.updateStatutCommande(c.idcommande).subscribe({
+    next: () => {
+      this.detailCmd = null;
+      this.load();
+    },
+    error: e => this.error = e.error?.message || 'Erreur lors de la mise à jour'
+  });
 }
 }

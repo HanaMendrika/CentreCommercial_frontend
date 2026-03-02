@@ -158,10 +158,9 @@
     </div>
 
   <!-- Remplacez le bloc <td>...</td> par ceci, juste avant </div> de fermeture de la modal -->
-<ng-container *ngIf="detailCmd.idstatus !== 'confirmé' && detailCmd.idstatus !== 'annulé'">
+<ng-container *ngIf="detailCmd.idstatus !== 'confirmé' && detailCmd.idstatus !== 'annulé' && detailCmd.idstatus !== 'PAYEE'">
   <div class="cc-modal-ft" style="margin-top:16px">
-    <button class="cc-btn-primary" (click)="updateStatus(detailCmd, 'confirmé')" title="Confirmer">Confirmer et payé</button>
-<button class="cc-btn-icon danger" (click)="updateStatus(detailCmd, 'annulé')" title="Annuler">Annuler</button>
+    <button class="cc-btn-primary" (click)="updateStatus(detailCmd)" title="Confirmer">Confirmer et payé</button>
   </div>
 </ng-container>
 
