@@ -73,8 +73,8 @@ export class DashboardComponent implements OnInit {
     datasets: [{
       data: [],
       backgroundColor: [
-        'rgba(99, 102, 241, 0.8)',
-        'rgba(52, 211, 153, 0.8)',
+        'rgba(253, 249, 11, 0.8)',
+        'rgba(255, 136, 81, 0.8)',
         'rgba(251, 146, 60, 0.8)',
         'rgba(239, 68, 68, 0.8)',
         'rgba(168, 85, 247, 0.8)'
@@ -89,7 +89,7 @@ export class DashboardComponent implements OnInit {
     plugins: {
       legend: {
         labels: {
-          color: 'var(--cc-text)'
+          color: '#ffff'
         }
       }
     }
