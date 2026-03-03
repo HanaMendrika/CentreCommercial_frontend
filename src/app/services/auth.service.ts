@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from '../../environnements/environment';
+import { environment } from '../../environments/environment'
 
 export interface LoginResponse {
   success: boolean;
