@@ -1,13 +1,13 @@
-// src/app/services/boutique.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environnements/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BoutiqueService {
-  private apiUrl = '/api/boutiques'; // Le proxy redirigera vers localhost:5000
+  private apiUrl = `${environment.apiUrl}/api/boutiques`;
 
   constructor(private http: HttpClient) { }
 
@@ -16,6 +16,6 @@ export class BoutiqueService {
   }
 
   testConnection(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/test`); // Si vous avez un endpoint /test
+    return this.http.get(`${this.apiUrl}/test`);
   }
 }

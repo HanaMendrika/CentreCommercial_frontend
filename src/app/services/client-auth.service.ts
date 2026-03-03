@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environnements/environment';
 
 export interface ClientUser {
   id: string;
@@ -12,21 +13,21 @@ export interface ClientUser {
 
 @Injectable({ providedIn: 'root' })
 export class ClientAuthService {
+  private base = environment.apiUrl;
   private readonly KEY_TOKEN  = 'cc_client_token';
   private readonly KEY_CLIENT = 'cc_client_user';
 
   constructor(private http: HttpClient) {}
 
   register(data: { nom: string; mail: string; mdp: string; contact: string; adresse: string }): Observable<any> {
-    return this.http.post('/api/auth/client/register', data);
+    return this.http.post(`${this.base}/api/auth/client/register`, data);
   }
 
   login(mail: string, mdp: string): Observable<any> {
-    return this.http.post<any>('/api/auth/client/login', { mail, mdp }).pipe(
+    return this.http.post<any>(`${this.base}/api/auth/client/login`, { mail, mdp }).pipe(
       tap(res => {
         if (res.token) {
           localStorage.setItem(this.KEY_TOKEN, res.token);
-          // Decode basic info from token payload
           try {
             const payload = JSON.parse(atob(res.token.split('.')[1]));
             const user: ClientUser = { id: payload.id, nom: res.nom || mail.split('@')[0], mail };
@@ -38,7 +39,7 @@ export class ClientAuthService {
   }
 
   logout(): Observable<any> {
-    return this.http.post('/api/auth/client/logout', {}).pipe(
+    return this.http.post(`${this.base}/api/auth/client/logout`, {}).pipe(
       tap(() => this.clear())
     );
   }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../environnements/environment';
 
 export interface LoginResponse {
   success: boolean;
@@ -12,10 +13,12 @@ export interface LoginResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private base = environment.apiUrl;
+
   constructor(private http: HttpClient) {}
 
   login(matricule: string, mdp: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/api/auth/login', { matricule, mdp }).pipe(
+    return this.http.post<LoginResponse>(`${this.base}/api/auth/login`, { matricule, mdp }).pipe(
       tap(response => {
         if (response.success) {
           localStorage.setItem('user', JSON.stringify(response));

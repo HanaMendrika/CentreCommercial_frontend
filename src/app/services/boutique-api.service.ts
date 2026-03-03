@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environnements/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BoutiqueApiService {
+  private base = environment.apiUrl;
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
@@ -18,121 +20,119 @@ export class BoutiqueApiService {
 
   // ── Profil ──────────────────────────────────────────────
   getProfil(): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}`);
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}`);
   }
   updateProfil(data: any): Observable<any> {
-    return this.http.put(`/api/boutiques/${this.idBoutique}`, data);
+    return this.http.put(`${this.base}/api/boutiques/${this.idBoutique}`, data);
   }
 
   // ── Produits ─────────────────────────────────────────────
   getProduits(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/produits`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/produits`, { params: filters });
   }
   addProduit(data: any): Observable<any> {
-    return this.http.post(`/api/boutiques/${this.idBoutique}/produits`, {
+    return this.http.post(`${this.base}/api/boutiques/${this.idBoutique}/produits`, {
       ...data,
       idProduit: this.genId('PROD')
     });
   }
   updateProduit(idProduit: string, data: any): Observable<any> {
-    return this.http.put(`/api/produits/${idProduit}`, data);
+    return this.http.put(`${this.base}/api/produits/${idProduit}`, data);
   }
   deleteProduit(idProduit: string): Observable<any> {
-    return this.http.delete(`/api/produits/${idProduit}`);
+    return this.http.delete(`${this.base}/api/produits/${idProduit}`);
   }
 
   // ── Clients ──────────────────────────────────────────────
   getClients(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/clients`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/clients`, { params: filters });
   }
   getTopClients(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/clients/top`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/clients/top`, { params: filters });
   }
   getClientById(idClient: string): Observable<any> {
-    return this.http.get(`/api/clients/${idClient}`);
+    return this.http.get(`${this.base}/api/clients/${idClient}`);
   }
 
   // ── Loyer ────────────────────────────────────────────────
   getLoyers(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/loyer`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/loyer`, { params: filters });
   }
   addLoyer(data: any): Observable<any> {
-    return this.http.post(`/api/boutiques/${this.idBoutique}/loyer`, {
+    return this.http.post(`${this.base}/api/boutiques/${this.idBoutique}/loyer`, {
       ...data,
       idLoyer: this.genId('LOYER')
     });
   }
   updateLoyer(idLoyer: string, data: any): Observable<any> {
-    return this.http.put(`/api/loyer/${idLoyer}`, data);
+    return this.http.put(`${this.base}/api/loyer/${idLoyer}`, data);
   }
   deleteLoyer(idLoyer: string): Observable<any> {
-    return this.http.delete(`/api/loyer/${idLoyer}`);
+    return this.http.delete(`${this.base}/api/loyer/${idLoyer}`);
   }
 
   // ── Promotions ───────────────────────────────────────────
   getPromotions(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/promotions`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/promotions`, { params: filters });
   }
   createPromotion(data: any): Observable<any> {
-    return this.http.post('/api/promotions', {
+    return this.http.post(`${this.base}/api/promotions`, {
       ...data,
       idBoutiques: [this.idBoutique]
     });
   }
   updatePromotion(id: string, data: any): Observable<any> {
-    return this.http.put(`/api/promotions/${id}`, data);
+    return this.http.put(`${this.base}/api/promotions/${id}`, data);
   }
   deletePromotion(id: string): Observable<any> {
-    return this.http.delete(`/api/promotions/${id}`);
+    return this.http.delete(`${this.base}/api/promotions/${id}`);
   }
 
   // ── Ventes ───────────────────────────────────────────────
   getVentes(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/ventes`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/ventes`, { params: filters });
   }
   getVentesStats(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/ventes/stats`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/ventes/stats`, { params: filters });
   }
 
   // ── Employés ─────────────────────────────────────────────
   getEmployes(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/employes`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/employes`, { params: filters });
   }
   addEmploye(data: any): Observable<any> {
-    return this.http.post(`/api/boutiques/${this.idBoutique}/employes`, {
+    return this.http.post(`${this.base}/api/boutiques/${this.idBoutique}/employes`, {
       ...data,
       idEmploye: this.genId('EMP')
     });
   }
   updateEmploye(idEmploye: string, data: any): Observable<any> {
-    return this.http.put(`/api/employes/${idEmploye}`, data);
+    return this.http.put(`${this.base}/api/employes/${idEmploye}`, data);
   }
   deleteEmploye(idEmploye: string): Observable<any> {
-    return this.http.delete(`/api/employes/${idEmploye}`);
+    return this.http.delete(`${this.base}/api/employes/${idEmploye}`);
   }
 
   // ── Commandes ────────────────────────────────────────────
   getCommandes(filters?: any): Observable<any> {
-    return this.http.get(`/api/boutiques/${this.idBoutique}/commandes`, { params: filters });
+    return this.http.get(`${this.base}/api/boutiques/${this.idBoutique}/commandes`, { params: filters });
   }
   createCommande(data: any): Observable<any> {
     const id = this.genId('CMD');
-    return this.http.post(`/api/boutiques/${this.idBoutique}/commandes`, {
+    return this.http.post(`${this.base}/api/boutiques/${this.idBoutique}/commandes`, {
       ...data,
       idcommande: id,
       numero_commande: `N-${id}`
     });
   }
   updateCommande(idCommande: string, data: any): Observable<any> {
-    return this.http.put(`/api/commandes/${idCommande}`, data);
+    return this.http.put(`${this.base}/api/commandes/${idCommande}`, data);
   }
   deleteCommande(idCommande: string): Observable<any> {
-    return this.http.delete(`/api/commandes/${idCommande}`);
+    return this.http.delete(`${this.base}/api/commandes/${idCommande}`);
   }
 
-  //confirmer et payer
- updateStatutCommande(id: string) {
-  return this.http.patch(`/api/commandes/${id}/statut`, { idstatus: 'PAYEE' });
+  updateStatutCommande(id: string) {
+    return this.http.patch(`${this.base}/api/commandes/${id}/statut`, { idstatus: 'PAYEE' });
+  }
 }
-}
-
